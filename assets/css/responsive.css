@@ -1,0 +1,354 @@
+/* ==========================
+   TABLET
+========================== */
+
+@media(max-width:992px){
+
+.nav-links{
+
+    gap:20px;
+
+}
+
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:768px){
+
+.nav-links{
+
+    display:none;
+
+}
+
+.menu-btn{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.logo img{
+
+    height:50px;
+
+}
+
+}
+
+/* HERO */
+
+@media(max-width:992px){
+
+.hero-content{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.hero p{
+
+    margin:auto;
+    margin-bottom:40px;
+
+}
+
+.hero-buttons{
+
+    justify-content:center;
+
+}
+
+.hero h1{
+
+    font-size:48px;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.hero{
+
+    min-height:auto;
+
+    padding:120px 0 80px;
+
+}
+
+.hero h1{
+
+    font-size:36px;
+
+}
+
+.hero p{
+
+    font-size:17px;
+
+}
+
+.hero-buttons{
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+.hero-buttons .btn{
+
+    width:220px;
+
+    text-align:center;
+
+}
+
+}
+
+/* ABOUT */
+
+@media(max-width:992px){
+
+.about-container{
+
+    flex-direction:column;
+
+}
+
+.about-content{
+
+    text-align:center;
+
+}
+
+.about-cards{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+/* ==============================
+   FEATURED BOOKS RESPONSIVE
+============================== */
+
+@media (max-width: 992px) {
+
+    .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .section-heading h2 {
+        font-size: 38px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .books-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .book-cover {
+        height: 430px;
+    }
+
+    .section-heading h2 {
+        font-size: 34px;
+    }
+
+}
+
+/* ==============================
+   CATEGORIES RESPONSIVE
+============================== */
+
+@media (max-width: 992px) {
+
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* ==============================
+   WHY US RESPONSIVE
+============================== */
+
+@media (max-width: 992px) {
+
+    .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .why-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* ==============================
+   HERO SLIDER RESPONSIVE
+============================== */
+
+@media (max-width: 1100px) {
+
+    .hero-slide-content {
+        gap: 40px;
+    }
+
+    .hero-slide h1 {
+        font-size: 52px;
+    }
+
+    .hero-slide .hero-image img {
+        max-width: 450px;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .hero-slider,
+    .hero-slides,
+    .hero-slide {
+        min-height: auto;
+    }
+
+    .hero-slide {
+        position: absolute;
+        padding: 90px 0 100px;
+    }
+
+    .hero-slide-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .hero-slide .hero-text {
+        max-width: 100%;
+    }
+
+    .hero-slide h1 {
+        font-size: 39px;
+    }
+
+    .hero-slide p {
+        font-size: 16px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-slide .hero-image img {
+        max-width: 320px;
+        max-height: 350px;
+    }
+
+    .hero-arrow {
+        width: 42px;
+        height: 42px;
+    }
+
+    .hero-prev {
+        left: 15px;
+    }
+
+    .hero-next {
+        right: 15px;
+    }
+
+    .hero-dots {
+        bottom: 25px;
+    }
+
+}
+
+/* ==============================
+   LATEST PUBLICATIONS RESPONSIVE
+============================== */
+
+@media (max-width: 1100px) {
+
+    .latest-books {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .latest-header {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 20px;
+    }
+
+    .latest-header h2 {
+        font-size: 36px;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .latest-books {
+        grid-template-columns: 1fr;
+    }
+
+    .latest-book-image {
+        height: 400px;
+    }
+
+}
+
+/* ==============================
+   AUTHORS RESPONSIVE
+============================== */
+
+@media (max-width: 992px) {
+
+    .authors-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .authors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .author-image {
+        height: 380px;
+    }
+
+}

@@ -1,0 +1,870 @@
+<?php
+include 'includes/database.php';
+include 'includes/header.php';
+include 'includes/navbar.php';
+?>
+
+<main>
+
+   <section class="hero-slider">
+
+    <div class="hero-slides">
+
+        <?php
+
+        $hero_query = "
+            SELECT *
+            FROM hero_slides
+            WHERE is_active = 1
+            ORDER BY sort_order ASC, id ASC
+        ";
+
+        $hero_result = mysqli_query($conn, $hero_query);
+
+        $slide_number = 0;
+
+        if ($hero_result && mysqli_num_rows($hero_result) > 0):
+
+            while ($slide = mysqli_fetch_assoc($hero_result)):
+
+                $active_class = ($slide_number === 0) ? 'active' : '';
+
+        ?>
+
+        <article class="hero-slide <?php echo $active_class; ?>">
+
+            <div class="container hero-slide-content">
+
+                <div class="hero-text">
+
+                    <span class="hero-subtitle">
+                        Shtëpia Botuese "Jakup Ceraja"
+                    </span>
+
+                    <h1>
+                        <?php echo htmlspecialchars($slide['title']); ?>
+                    </h1>
+
+                    <p>
+                        <?php echo htmlspecialchars($slide['subtitle']); ?>
+                    </p>
+
+                    <?php if (!empty($slide['button_text'])): ?>
+
+                        <a
+                            href="<?php echo htmlspecialchars($slide['button_link']); ?>"
+                            class="btn btn-primary"
+                        >
+                            <?php echo htmlspecialchars($slide['button_text']); ?>
+
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    <?php endif; ?>
+
+                </div>
+
+                <div class="hero-image">
+
+                    <img
+                        src="assets/images/hero/<?php echo htmlspecialchars($slide['image']); ?>"
+                        alt="<?php echo htmlspecialchars($slide['title']); ?>"
+                    >
+
+                </div>
+
+            </div>
+
+        </article>
+
+        <?php
+
+                $slide_number++;
+
+            endwhile;
+
+        else:
+
+        ?>
+
+            <article class="hero-slide active">
+
+                <div class="container hero-slide-content">
+
+                    <div class="hero-text">
+
+                        <span class="hero-subtitle">
+                            Shtëpia Botuese "Jakup Ceraja"
+                        </span>
+
+                        <h1>
+                            Libra që ruajnë kulturën dhe frymëzojnë breza.
+                        </h1>
+
+                        <p>
+                            Zbuloni botimet tona dhe pasurinë e letërsisë
+                            shqiptare dhe botërore.
+                        </p>
+
+                        <a href="books.php" class="btn btn-primary">
+                            Shfleto Librat
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        <?php endif; ?>
+
+    </div>
+
+
+    <?php if (isset($slide_number) && $slide_number > 1): ?>
+
+        <button class="hero-arrow hero-prev" type="button">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <button class="hero-arrow hero-next" type="button">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+
+        <div class="hero-dots">
+
+            <?php for ($i = 0; $i < $slide_number; $i++): ?>
+
+                <button
+                    type="button"
+                    class="hero-dot <?php echo $i === 0 ? 'active' : ''; ?>"
+                    data-slide="<?php echo $i; ?>"
+                    aria-label="Shfaq slide <?php echo $i + 1; ?>"
+                ></button>
+
+            <?php endfor; ?>
+
+        </div>
+
+    <?php endif; ?>
+
+    </section>
+    
+    <section class="about">
+
+    <div class="container about-container">
+
+        <div class="about-image">
+
+            <img src="assets/images/backgrounds/about-books.jpg" alt="Rreth Nesh">
+
+        </div>
+
+        <div class="about-content">
+
+            <span class="section-tag">
+                RRETH NESH
+            </span>
+
+            <h2>
+                Traditë, kulturë dhe pasion për librin.
+            </h2>
+
+            <p>
+                Shtëpia Botuese "Jakup Ceraja" është një shtëpi botuese nga Kosova
+                e përkushtuar botimit të veprave me vlerë letrare, kulturore,
+                historike dhe edukative.
+            </p>
+
+            <p>
+                Ne besojmë se libri është ura që lidh brezat. Përmes botimeve tona
+                promovojmë autorët shqiptarë dhe sjellim përkthime cilësore nga
+                letërsia botërore.
+            </p>
+
+            <div class="about-cards">
+
+                <div class="about-card">
+
+                    <i class="fa-solid fa-book"></i>
+
+                    <h3>Botime Cilësore</h3>
+
+                    <p>Libra të përzgjedhur me standarde të larta botimi.</p>
+
+                </div>
+
+                <div class="about-card">
+
+                    <i class="fa-solid fa-earth-europe"></i>
+
+                    <h3>Përkthime</h3>
+
+                    <p>Vepra të njohura botërore në gjuhën shqipe.</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    </section>
+    <section class="featured-books">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+                BOTIMET TONA
+            </span>
+
+            <h2>
+                Librat e Veçuar
+            </h2>
+
+            <p>
+                Zbuloni disa nga botimet tona të përzgjedhura.
+            </p>
+
+        </div>
+
+        <div class="books-grid">
+
+            <?php
+
+            $books_query = "
+                SELECT
+                    books.*,
+                    authors.fullname AS author_name,
+                    categories.name AS category_name
+                FROM books
+                LEFT JOIN authors
+                    ON books.author_id = authors.id
+                LEFT JOIN categories
+                    ON books.category_id = categories.id
+                WHERE books.featured = 1
+                ORDER BY books.id DESC
+                LIMIT 6
+            ";
+
+            $books_result = mysqli_query($conn, $books_query);
+
+            if ($books_result && mysqli_num_rows($books_result) > 0):
+
+                while ($book = mysqli_fetch_assoc($books_result)):
+
+            ?>
+
+                <article class="book-card">
+
+                    <div class="book-cover">
+
+                        <img
+                            src="assets/uploads/books/<?php echo htmlspecialchars($book['cover']); ?>"
+                            alt="<?php echo htmlspecialchars($book['title']); ?>"
+                        >
+
+                        <span class="book-category">
+                            <?php echo htmlspecialchars($book['category_name']); ?>
+                        </span>
+
+                    </div>
+
+                    <div class="book-content">
+
+                        <h3>
+                            <?php echo htmlspecialchars($book['title']); ?>
+                        </h3>
+
+                        <p class="book-author">
+                            <?php echo htmlspecialchars($book['author_name']); ?>
+                        </p>
+
+                        <p class="book-description">
+                            <?php
+                            echo htmlspecialchars(
+                                mb_strimwidth(
+                                    $book['description'],
+                                    0,
+                                    120,
+                                    '...'
+                                )
+                            );
+                            ?>
+                        </p>
+
+                        <a
+                            href="book-details.php?id=<?php echo $book['id']; ?>"
+                            class="book-link"
+                        >
+                            Lexo më shumë
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+
+                    </div>
+
+                </article>
+
+            <?php
+
+                endwhile;
+
+            else:
+
+            ?>
+
+                <p class="no-books">
+                    Aktualisht nuk ka libra të publikuar.
+                </p>
+
+            <?php endif; ?>
+
+        </div>
+
+        <div class="books-button">
+
+            <a href="books.php" class="btn btn-primary">
+                Shiko të gjithë librat
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+    </div>
+
+    </section>
+    <section class="categories-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+                ZBULO BOTIMET
+            </span>
+
+            <h2>
+                Kategoritë
+            </h2>
+
+            <p>
+                Eksploroni botimet tona sipas kategorive.
+            </p>
+
+        </div>
+
+        <div class="categories-grid">
+
+            <?php
+
+            $categories_query = "
+                SELECT *
+                FROM categories
+                ORDER BY id ASC
+            ";
+
+            $categories_result = mysqli_query($conn, $categories_query);
+
+            if ($categories_result && mysqli_num_rows($categories_result) > 0):
+
+                while ($category = mysqli_fetch_assoc($categories_result)):
+
+            ?>
+
+                <a
+                    href="books.php?category=<?php echo $category['id']; ?>"
+                    class="category-card"
+                >
+
+                    <div class="category-icon">
+
+                        <i class="fa-solid fa-<?php echo htmlspecialchars($category['icon']); ?>"></i>
+
+                    </div>
+
+                    <h3>
+                        <?php echo htmlspecialchars($category['name']); ?>
+                    </h3>
+
+                    <span class="category-arrow">
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </span>
+
+                </a>
+
+            <?php
+
+                endwhile;
+
+            endif;
+
+            ?>
+
+        </div>
+
+    </div>
+
+    </section>
+    <section class="why-us">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+                PSE NE?
+            </span>
+
+            <h2>
+                Pse të zgjidhni Jakup Ceraja?
+            </h2>
+
+            <p>
+                Përkushtimi ynë ndaj librit dhe kulturës është në qendër të çdo botimi.
+            </p>
+
+        </div>
+
+        <div class="why-grid">
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+
+                <h3>Cilësi Botimi</h3>
+
+                <p>
+                    Kujdes i veçantë në përzgjedhjen dhe përgatitjen e çdo botimi.
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    <i class="fa-solid fa-earth-europe"></i>
+                </div>
+
+                <h3>Përkthime Ndërkombëtare</h3>
+
+                <p>
+                    Sjellim në gjuhën shqipe vepra dhe autorë të njohur nga bota.
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    <i class="fa-solid fa-pen-nib"></i>
+                </div>
+
+                <h3>Autorë Shqiptarë</h3>
+
+                <p>
+                    Mbështesim dhe promovojmë krijimtarinë e autorëve shqiptarë.
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+
+                <h3>Dashuri për Librin</h3>
+
+                <p>
+                    Libri dhe kultura e leximit janë në themel të punës sonë.
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <h3>Profesionalizëm</h3>
+
+                <p>
+                    Punojmë me përkushtim për të ofruar botime të denja për lexuesit.
+                </p>
+
+            </div>
+
+            <div class="why-card">
+
+                <div class="why-icon">
+                    <i class="fa-solid fa-handshake"></i>
+                </div>
+
+                <h3>Bashkëpunim me Autorë</h3>
+
+                <p>
+                    Krijojmë marrëdhënie të qëndrueshme dhe profesionale me autorët.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    </section> 
+    <section class="latest-publications">
+
+    <div class="container">
+
+        <div class="latest-header">
+
+            <div>
+
+                <span class="section-tag">
+                    BOTIMET E FUNDIT
+                </span>
+
+                <h2>
+                    Publikimet më të reja
+                </h2>
+
+                <p>
+                    Zbuloni librat më të fundit të botuar nga
+                    Shtëpia Botuese "Jakup Ceraja".
+                </p>
+
+            </div>
+
+            <a href="books.php" class="latest-view-all">
+
+                Shiko të gjithë librat
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+
+        <div class="latest-books">
+
+            <?php
+
+            $latest_query = "
+                SELECT
+                    books.*,
+                    authors.fullname AS author_name,
+                    categories.name AS category_name
+                FROM books
+
+                LEFT JOIN authors
+                    ON books.author_id = authors.id
+
+                LEFT JOIN categories
+                    ON books.category_id = categories.id
+
+                ORDER BY books.publish_date DESC, books.id DESC
+
+                LIMIT 4
+            ";
+
+            $latest_result = mysqli_query($conn, $latest_query);
+
+
+            if ($latest_result && mysqli_num_rows($latest_result) > 0):
+
+                while ($book = mysqli_fetch_assoc($latest_result)):
+
+            ?>
+
+                <article class="latest-book-card">
+
+
+                    <div class="latest-book-image">
+
+                        <img
+                            src="assets/uploads/books/<?php echo htmlspecialchars($book['cover']); ?>"
+                            alt="<?php echo htmlspecialchars($book['title']); ?>"
+                        >
+
+
+                        <span class="latest-date">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            <?php
+                            echo date(
+                                'd.m.Y',
+                                strtotime($book['publish_date'])
+                            );
+                            ?>
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="latest-book-content">
+
+
+                        <span class="latest-category">
+
+                            <?php
+                            echo htmlspecialchars(
+                                $book['category_name']
+                            );
+                            ?>
+
+                        </span>
+
+
+                        <h3>
+
+                            <?php
+                            echo htmlspecialchars(
+                                $book['title']
+                            );
+                            ?>
+
+                        </h3>
+
+
+                        <p class="latest-author">
+
+                            <i class="fa-solid fa-pen-nib"></i>
+
+                            <?php
+                            echo htmlspecialchars(
+                                $book['author_name']
+                            );
+                            ?>
+
+                        </p>
+
+
+                        <a
+                            href="book-details.php?id=<?php echo $book['id']; ?>"
+                            class="latest-link"
+                        >
+
+                            Lexo më shumë
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+
+                    </div>
+
+                </article>
+
+            <?php
+
+                endwhile;
+
+            else:
+
+            ?>
+
+                <p class="no-books">
+                    Aktualisht nuk ka publikime.
+                </p>
+
+            <?php endif; ?>
+
+        </div>
+
+    </div>
+
+    </section>
+    <section class="featured-authors">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+                ZËRAT E LETËRSISË
+            </span>
+
+            <h2>
+                Autorët Tanë
+            </h2>
+
+            <p>
+                Njihuni me disa nga autorët që kanë pasuruar
+                katalogun e Shtëpisë Botuese "Jakup Ceraja".
+            </p>
+
+        </div>
+
+
+        <div class="authors-grid">
+
+            <?php
+
+            $authors_query = "
+                SELECT
+                    authors.*,
+                    COUNT(books.id) AS books_count
+
+                FROM authors
+
+                LEFT JOIN books
+                    ON authors.id = books.author_id
+
+                GROUP BY authors.id
+
+                ORDER BY books_count DESC, authors.id ASC
+
+                LIMIT 6
+            ";
+
+            $authors_result = mysqli_query($conn, $authors_query);
+
+
+            if (
+                $authors_result &&
+                mysqli_num_rows($authors_result) > 0
+            ):
+
+                while ($author = mysqli_fetch_assoc($authors_result)):
+
+            ?>
+
+                <article class="author-card">
+
+
+                    <div class="author-image">
+
+                        <?php if (!empty($author['photo'])): ?>
+
+                            <img
+                                src="assets/uploads/authors/<?php echo htmlspecialchars($author['photo']); ?>"
+                                alt="<?php echo htmlspecialchars($author['fullname']); ?>"
+                            >
+
+                        <?php else: ?>
+
+                            <div class="author-placeholder">
+
+                                <i class="fa-solid fa-user"></i>
+
+                            </div>
+
+                        <?php endif; ?>
+
+
+                        <div class="author-overlay">
+
+                            <a
+                                href="author-details.php?id=<?php echo $author['id']; ?>"
+                                aria-label="Shiko autorin"
+                            >
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="author-content">
+
+                        <h3>
+                            <?php
+                            echo htmlspecialchars(
+                                $author['fullname']
+                            );
+                            ?>
+                        </h3>
+
+
+                        <p class="author-bio">
+
+                            <?php
+
+                            echo htmlspecialchars(
+                                mb_strimwidth(
+                                    $author['biography'],
+                                    0,
+                                    110,
+                                    '...'
+                                )
+                            );
+
+                            ?>
+
+                        </p>
+
+
+                        <div class="author-books">
+
+                            <i class="fa-solid fa-book"></i>
+
+                            <?php
+                            echo (int) $author['books_count'];
+                            ?>
+
+                            <?php
+                            echo $author['books_count'] == 1
+                                ? 'libër'
+                                : 'libra';
+                            ?>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            <?php
+
+                endwhile;
+
+            else:
+
+            ?>
+
+                <p class="no-books">
+                    Aktualisht nuk ka autorë të publikuar.
+                </p>
+
+            <?php endif; ?>
+
+        </div>
+
+
+        <div class="authors-button">
+
+            <a
+                href="authors.php"
+                class="btn btn-outline"
+            >
+
+                Shiko të gjithë autorët
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    </section>           
+</main>
+
+<?php
+include 'includes/footer.php';
+?>
