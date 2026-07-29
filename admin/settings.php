@@ -4,12 +4,15 @@ require_once '../includes/auth.php';
 require_once '../includes/database.php';
 
 
-// Merr të dhënat e adminit aktual
+// ==========================================
+// ADMIN DATA
+// ==========================================
+
 $admin_id = $_SESSION['admin_id'];
 
 $stmt = mysqli_prepare(
     $conn,
-    "SELECT id, fullname, username
+    "SELECT id, fullname, username, password
      FROM admins
      WHERE id = ?
      LIMIT 1"
@@ -31,8 +34,11 @@ mysqli_stmt_close($stmt);
 
 
 if (!$admin) {
+
     session_destroy();
+
     header("Location: login.php");
+
     exit;
 }
 
@@ -41,9 +47,9 @@ $success = '';
 $error = '';
 
 
-// ======================================================
+// ==========================================
 // UPDATE PROFILE
-// ======================================================
+// ==========================================
 
 if (isset($_POST['update_profile'])) {
 
@@ -53,11 +59,12 @@ if (isset($_POST['update_profile'])) {
 
     if ($fullname === '' || $username === '') {
 
-        $error = "Ju lutem plotësoni të gjitha fushat.";
+        $error =
+            "Ju lutem plotësoni të gjitha fushat.";
 
     } else {
 
-        // Kontrollo nëse username është përdorur nga dikush tjetër
+        // Kontrollo username-in
         $check = mysqli_prepare(
             $conn,
             "SELECT id
@@ -76,11 +83,14 @@ if (isset($_POST['update_profile'])) {
 
         mysqli_stmt_execute($check);
 
-        $check_result = mysqli_stmt_get_result($check);
+        $check_result =
+            mysqli_stmt_get_result($check);
+
 
         if (mysqli_num_rows($check_result) > 0) {
 
-            $error = "Ky username është duke u përdorur.";
+            $error =
+                "Ky username është duke u përdorur.";
 
         } else {
 
@@ -99,19 +109,29 @@ if (isset($_POST['update_profile'])) {
                 $admin_id
             );
 
+
             if (mysqli_stmt_execute($update)) {
 
-                $_SESSION['admin_fullname'] = $fullname;
-                $_SESSION['admin_username'] = $username;
+                $_SESSION['admin_fullname'] =
+                    $fullname;
 
-                $admin['fullname'] = $fullname;
-                $admin['username'] = $username;
+                $_SESSION['admin_username'] =
+                    $username;
 
-                $success = "Të dhënat u përditësuan me sukses.";
+                $admin['fullname'] =
+                    $fullname;
+
+                $admin['username'] =
+                    $username;
+
+                $success =
+                    "Të dhënat u përditësuan me sukses.";
 
             } else {
 
-                $error = "Ndodhi një gabim gjatë ruajtjes.";
+                $error =
+                    "Ndodhi një gabim gjatë ruajtjes.";
+
             }
 
             mysqli_stmt_close($update);
@@ -122,9 +142,9 @@ if (isset($_POST['update_profile'])) {
 }
 
 
-// ======================================================
+// ==========================================
 // CHANGE PASSWORD
-// ======================================================
+// ==========================================
 
 if (isset($_POST['change_password'])) {
 
@@ -147,12 +167,16 @@ if (isset($_POST['change_password'])) {
         $error =
             "Ju lutem plotësoni të gjitha fushat.";
 
-    } elseif ($new_password !== $confirm_password) {
+    } elseif (
+        $new_password !== $confirm_password
+    ) {
 
         $error =
             "Password-at e rinj nuk përputhen.";
 
-    } elseif (strlen($new_password) < 8) {
+    } elseif (
+        strlen($new_password) < 8
+    ) {
 
         $error =
             "Password-i duhet të ketë së paku 8 karaktere.";
@@ -251,17 +275,28 @@ if (isset($_POST['change_password'])) {
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Cilësimet | Admin Panel</title>
+    <title>
+        Cilësime | Jakup Ceraja
+    </title>
+
+
+    <!-- ADMIN CSS -->
 
     <link
         rel="stylesheet"
         href="../assets/css/admin.css"
     >
 
+
+    <!-- ANIMATIONS -->
+
     <link
         rel="stylesheet"
         href="../assets/css/animations.css"
     >
+
+
+    <!-- FONT AWESOME -->
 
     <link
         rel="stylesheet"
@@ -271,130 +306,334 @@ if (isset($_POST['change_password'])) {
 </head>
 
 
-<body class="admin-page">
+<body>
 
+
+<!-- ==========================================
+     ADMIN LAYOUT
+=========================================== -->
 
 <div class="admin-layout">
 
 
-    <!-- SIDEBAR -->
+    <!-- ======================================
+         SIDEBAR
+    ======================================= -->
 
     <aside class="admin-sidebar">
 
-        <div class="admin-sidebar-logo">
+
+        <!-- LOGO -->
+
+        <div class="admin-logo">
 
             <div class="admin-logo-icon">
+
                 <i class="fa-solid fa-book-open"></i>
+
             </div>
 
+
             <div>
-                <strong>Jakup Ceraja</strong>
-                <span>Admin Panel</span>
+
+                <strong>
+                    Jakup Ceraja
+                </strong>
+
+                <span>
+                    Admin Panel
+                </span>
+
             </div>
 
         </div>
 
 
-        <nav class="admin-sidebar-nav">
+        <!-- NAVIGATION -->
+
+        <nav class="admin-nav">
+
 
             <a href="dashboard.php">
+
                 <i class="fa-solid fa-chart-line"></i>
-                Dashboard
+
+                <span>
+                    Dashboard
+                </span>
+
             </a>
+
+
+            <a href="books.php">
+
+                <i class="fa-solid fa-book"></i>
+
+                <span>
+                    Libra
+                </span>
+
+            </a>
+
+
+            <a href="authors.php">
+
+                <i class="fa-solid fa-pen-nib"></i>
+
+                <span>
+                    Autorë
+                </span>
+
+            </a>
+
+
+            <a href="categories.php">
+
+                <i class="fa-solid fa-layer-group"></i>
+
+                <span>
+                    Kategori
+                </span>
+
+            </a>
+
+
+            <a href="news.php">
+
+                <i class="fa-solid fa-newspaper"></i>
+
+                <span>
+                    Lajme
+                </span>
+
+            </a>
+
+
+            <a href="gallery.php">
+
+                <i class="fa-solid fa-images"></i>
+
+                <span>
+                    Galeri
+                </span>
+
+            </a>
+
+
+            <a href="messages.php">
+
+                <i class="fa-solid fa-envelope"></i>
+
+                <span>
+                    Mesazhe
+                </span>
+
+            </a>
+
 
             <a href="orders.php">
-                <i class="fa-solid fa-box"></i>
-                Porositë
+
+                <i class="fa-solid fa-cart-shopping"></i>
+
+                <span>
+                    Porosi
+                </span>
+
             </a>
 
-            <a href="settings.php" class="active">
+
+            <!-- ACTIVE -->
+
+            <a
+                href="settings.php"
+                class="active"
+            >
+
                 <i class="fa-solid fa-gear"></i>
-                Cilësimet
+
+                <span>
+                    Cilësime
+                </span>
+
             </a>
+
 
         </nav>
 
 
+        <!-- SIDEBAR BOTTOM -->
+
         <div class="admin-sidebar-bottom">
 
-            <a href="../index.php">
+
+            <a
+                href="../index.php"
+                target="_blank"
+            >
+
                 <i class="fa-solid fa-globe"></i>
+
                 Shiko faqen
+
             </a>
 
-            <a href="logout.php" class="logout-link">
+
+            <a href="logout.php">
+
                 <i class="fa-solid fa-right-from-bracket"></i>
+
                 Dil
+
             </a>
+
 
         </div>
+
 
     </aside>
 
 
-    <!-- MAIN -->
+
+    <!-- ======================================
+         MAIN
+    ======================================= -->
 
     <main class="admin-main">
 
 
-        <!-- TOPBAR -->
+        <!-- ==================================
+             TOPBAR
+        =================================== -->
 
         <header class="admin-topbar">
 
-            <div>
 
-                <span class="admin-page-label">
+            <!-- MOBILE MENU -->
+
+            <button
+                type="button"
+                class="admin-menu-toggle"
+                id="adminMenuToggle"
+            >
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+
+            <!-- PAGE TITLE -->
+
+            <div class="admin-topbar-title">
+
+                <span>
                     ADMIN PANEL
                 </span>
 
                 <h1>
-                    Cilësimet
+                    Cilësime
                 </h1>
 
             </div>
 
 
-            <div class="admin-user">
+            <!-- TOPBAR ACTIONS -->
 
-                <div class="admin-user-icon">
-                    <i class="fa-solid fa-user"></i>
-                </div>
+            <div class="admin-topbar-actions">
+
+
+                <!-- DARK MODE -->
+
+                <button
+                    type="button"
+                    class="admin-icon-btn"
+                    id="darkModeToggle"
+                    title="Dark mode"
+                >
+
+                    <i class="fa-solid fa-moon"></i>
+
+                </button>
+
+
+                <!-- WEBSITE -->
+
+                <a
+                    href="../index.php"
+                    target="_blank"
+                    class="admin-view-site"
+                >
+
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+
+                    Faqja
+
+                </a>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- ==================================
+             CONTENT
+        =================================== -->
+
+        <div class="admin-content">
+
+
+            <!-- PAGE INTRO -->
+
+            <div class="admin-welcome">
 
                 <div>
 
-                    <strong>
-                        <?php
-                        echo htmlspecialchars(
-                            $admin['fullname']
-                        );
-                        ?>
-                    </strong>
-
                     <span>
-                        Administrator
+                        LLOGARIA
                     </span>
+
+                    <h2>
+                        Cilësimet e administratorit
+                    </h2>
+
+                    <p>
+                        Menaxho emrin, username-in dhe
+                        password-in e llogarisë së administratorit.
+                    </p>
+
+                </div>
+
+
+                <div class="admin-welcome-icon">
+
+                    <i class="fa-solid fa-user-gear"></i>
 
                 </div>
 
             </div>
 
-        </header>
 
 
-        <!-- CONTENT -->
-
-        <section class="admin-settings-content">
+            <!-- =================================
+                 MESSAGES
+            ================================== -->
 
 
             <?php if ($success !== ''): ?>
 
-                <div class="settings-message success">
+                <div class="settings-alert settings-success">
 
                     <i class="fa-solid fa-circle-check"></i>
 
-                    <?php
-                    echo htmlspecialchars($success);
-                    ?>
+                    <span>
+
+                        <?php
+                        echo htmlspecialchars($success);
+                        ?>
+
+                    </span>
 
                 </div>
 
@@ -403,50 +642,65 @@ if (isset($_POST['change_password'])) {
 
             <?php if ($error !== ''): ?>
 
-                <div class="settings-message error">
+                <div class="settings-alert settings-error">
 
                     <i class="fa-solid fa-circle-exclamation"></i>
 
-                    <?php
-                    echo htmlspecialchars($error);
-                    ?>
+                    <span>
+
+                        <?php
+                        echo htmlspecialchars($error);
+                        ?>
+
+                    </span>
 
                 </div>
 
             <?php endif; ?>
 
 
-            <!-- PROFILE -->
 
-            <div class="settings-card">
+            <!-- =================================
+                 PROFILE SETTINGS
+            ================================== -->
 
-                <div class="settings-card-header">
+            <section class="admin-panel-card settings-card">
 
-                    <div class="settings-card-icon">
+
+                <div class="admin-panel-header">
+
+
+                    <div>
+
+                        <span>
+                            PROFILI
+                        </span>
+
+                        <h3>
+                            Të dhënat e llogarisë
+                        </h3>
+
+                    </div>
+
+
+                    <div class="settings-section-icon">
 
                         <i class="fa-solid fa-user"></i>
 
                     </div>
 
-                    <div>
-
-                        <h2>
-                            Të dhënat e llogarisë
-                        </h2>
-
-                        <p>
-                            Ndrysho emrin dhe username-in e administratorit.
-                        </p>
-
-                    </div>
 
                 </div>
 
 
+
                 <form method="POST">
 
-                    <div class="settings-form-grid">
 
+                    <div class="settings-fields">
+
+
+                        <!-- FULLNAME -->
 
                         <div class="settings-field">
 
@@ -454,19 +708,27 @@ if (isset($_POST['change_password'])) {
                                 Emri i plotë
                             </label>
 
-                            <input
-                                type="text"
-                                name="fullname"
-                                value="<?php
-                                echo htmlspecialchars(
-                                    $admin['fullname']
-                                );
-                                ?>"
-                                required
-                            >
+                            <div class="settings-input">
+
+                                <i class="fa-solid fa-user"></i>
+
+                                <input
+                                    type="text"
+                                    name="fullname"
+                                    value="<?php
+                                    echo htmlspecialchars(
+                                        $admin['fullname']
+                                    );
+                                    ?>"
+                                    required
+                                >
+
+                            </div>
 
                         </div>
 
+
+                        <!-- USERNAME -->
 
                         <div class="settings-field">
 
@@ -474,16 +736,22 @@ if (isset($_POST['change_password'])) {
                                 Username
                             </label>
 
-                            <input
-                                type="text"
-                                name="username"
-                                value="<?php
-                                echo htmlspecialchars(
-                                    $admin['username']
-                                );
-                                ?>"
-                                required
-                            >
+                            <div class="settings-input">
+
+                                <i class="fa-solid fa-at"></i>
+
+                                <input
+                                    type="text"
+                                    name="username"
+                                    value="<?php
+                                    echo htmlspecialchars(
+                                        $admin['username']
+                                    );
+                                    ?>"
+                                    required
+                                >
+
+                            </div>
 
                         </div>
 
@@ -491,55 +759,76 @@ if (isset($_POST['change_password'])) {
                     </div>
 
 
-                    <button
-                        type="submit"
-                        name="update_profile"
-                        class="settings-save-button"
-                    >
+                    <div class="settings-form-footer">
 
-                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>
+                            Ndryshimet ruhen direkt në databazë.
+                        </span>
 
-                        Ruaj ndryshimet
 
-                    </button>
+                        <button
+                            type="submit"
+                            name="update_profile"
+                            class="admin-primary-button"
+                        >
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Ruaj ndryshimet
+
+                        </button>
+
+                    </div>
+
 
                 </form>
 
-            </div>
+
+            </section>
 
 
-            <!-- PASSWORD -->
 
-            <div class="settings-card">
+            <!-- =================================
+                 PASSWORD SETTINGS
+            ================================== -->
 
-                <div class="settings-card-header">
+            <section class="admin-panel-card settings-card">
 
-                    <div class="settings-card-icon">
+
+                <div class="admin-panel-header">
+
+
+                    <div>
+
+                        <span>
+                            SIGURIA
+                        </span>
+
+                        <h3>
+                            Ndrysho password-in
+                        </h3>
+
+                    </div>
+
+
+                    <div class="settings-section-icon">
 
                         <i class="fa-solid fa-lock"></i>
 
                     </div>
 
-                    <div>
-
-                        <h2>
-                            Ndrysho password-in
-                        </h2>
-
-                        <p>
-                            Për siguri, përdor një password të fortë.
-                        </p>
-
-                    </div>
 
                 </div>
+
 
 
                 <form method="POST">
 
 
-                    <div class="settings-password-grid">
+                    <div class="settings-fields settings-password-fields">
 
+
+                        <!-- CURRENT -->
 
                         <div class="settings-field">
 
@@ -547,14 +836,22 @@ if (isset($_POST['change_password'])) {
                                 Password aktual
                             </label>
 
-                            <input
-                                type="password"
-                                name="current_password"
-                                required
-                            >
+                            <div class="settings-input">
+
+                                <i class="fa-solid fa-lock"></i>
+
+                                <input
+                                    type="password"
+                                    name="current_password"
+                                    required
+                                >
+
+                            </div>
 
                         </div>
 
+
+                        <!-- NEW -->
 
                         <div class="settings-field">
 
@@ -562,14 +859,22 @@ if (isset($_POST['change_password'])) {
                                 Password i ri
                             </label>
 
-                            <input
-                                type="password"
-                                name="new_password"
-                                required
-                            >
+                            <div class="settings-input">
+
+                                <i class="fa-solid fa-key"></i>
+
+                                <input
+                                    type="password"
+                                    name="new_password"
+                                    required
+                                >
+
+                            </div>
 
                         </div>
 
+
+                        <!-- CONFIRM -->
 
                         <div class="settings-field">
 
@@ -577,11 +882,17 @@ if (isset($_POST['change_password'])) {
                                 Konfirmo password-in
                             </label>
 
-                            <input
-                                type="password"
-                                name="confirm_password"
-                                required
-                            >
+                            <div class="settings-input">
+
+                                <i class="fa-solid fa-shield-halved"></i>
+
+                                <input
+                                    type="password"
+                                    name="confirm_password"
+                                    required
+                                >
+
+                            </div>
 
                         </div>
 
@@ -589,28 +900,155 @@ if (isset($_POST['change_password'])) {
                     </div>
 
 
-                    <button
-                        type="submit"
-                        name="change_password"
-                        class="settings-save-button"
-                    >
+                    <div class="settings-form-footer">
 
-                        <i class="fa-solid fa-key"></i>
+                        <span>
+                            Password-i duhet të ketë së paku 8 karaktere.
+                        </span>
 
-                        Ndrysho password-in
 
-                    </button>
+                        <button
+                            type="submit"
+                            name="change_password"
+                            class="admin-primary-button"
+                        >
+
+                            <i class="fa-solid fa-key"></i>
+
+                            Ndrysho password-in
+
+                        </button>
+
+                    </div>
+
 
                 </form>
 
-            </div>
+
+            </section>
 
 
-        </section>
+
+            <!-- =================================
+                 ACCOUNT INFORMATION
+            ================================== -->
+
+            <section class="admin-panel-card settings-card">
+
+
+                <div class="admin-panel-header">
+
+
+                    <div>
+
+                        <span>
+                            INFORMACION
+                        </span>
+
+                        <h3>
+                            Llogaria aktuale
+                        </h3>
+
+                    </div>
+
+
+                    <div class="settings-section-icon">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="settings-account-info">
+
+
+                    <div class="settings-info-item">
+
+                        <span>
+                            ID e administratorit
+                        </span>
+
+                        <strong>
+                            #<?php echo (int)$admin['id']; ?>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="settings-info-item">
+
+                        <span>
+                            Username aktual
+                        </span>
+
+                        <strong>
+                            <?php
+                            echo htmlspecialchars(
+                                $admin['username']
+                            );
+                            ?>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="settings-info-item">
+
+                        <span>
+                            Emri
+                        </span>
+
+                        <strong>
+                            <?php
+                            echo htmlspecialchars(
+                                $admin['fullname']
+                            );
+                            ?>
+                        </strong>
+
+                    </div>
+
+
+                    <div class="settings-info-item">
+
+                        <span>
+                            Roli
+                        </span>
+
+                        <strong>
+                            Administrator
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
 
     </main>
 
+
 </div>
+
+
+
+<!-- ==========================================
+     JAVASCRIPT
+=========================================== -->
+
+<script src="../assets/js/admin.js"></script>
+
+<script src="../assets/js/darkmode.js"></script>
 
 
 </body>
