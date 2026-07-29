@@ -312,3 +312,347 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
+
+/* =========================================
+   BOOK SEARCH & CATEGORY FILTER
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const bookSearch = document.getElementById("bookSearch");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const booksGrid = document.getElementById("booksGrid");
+    const noResults = document.getElementById("booksNoResults");
+
+    // Nëse nuk jemi në books.php, mos bëjmë asgjë
+    if (!bookSearch || !categoryFilter || !booksGrid) {
+        return;
+    }
+
+    const bookCards = booksGrid.querySelectorAll(".book-card");
+
+
+    function filterBooks() {
+
+        const searchValue =
+            bookSearch.value
+                .toLowerCase()
+                .trim();
+
+        const categoryValue =
+            categoryFilter.value
+                .toLowerCase()
+                .trim();
+
+        let visibleBooks = 0;
+
+
+        bookCards.forEach(function (card) {
+
+            const title =
+                (
+                    card.dataset.title || ""
+                ).toLowerCase();
+
+            const author =
+                (
+                    card.dataset.author || ""
+                ).toLowerCase();
+
+            const category =
+                (
+                    card.dataset.category || ""
+                ).toLowerCase();
+
+
+            // Search
+            const matchesSearch =
+                title.includes(searchValue) ||
+                author.includes(searchValue);
+
+
+            // Category
+            const matchesCategory =
+                categoryValue === "all" ||
+                category === categoryValue;
+
+
+            if (
+                matchesSearch &&
+                matchesCategory
+            ) {
+
+                card.style.display = "";
+
+                visibleBooks++;
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+
+        // Nëse nuk ka rezultate
+        if (visibleBooks === 0) {
+
+            noResults.style.display = "block";
+
+        } else {
+
+            noResults.style.display = "none";
+
+        }
+
+    }
+
+
+    // Search
+    bookSearch.addEventListener(
+        "input",
+        filterBooks
+    );
+
+
+    // Category
+    categoryFilter.addEventListener(
+        "change",
+        filterBooks
+    );
+
+});
+
+/* =========================================
+   AUTHOR SEARCH
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const authorSearch =
+        document.getElementById("authorSearch");
+
+    const authorsGrid =
+        document.getElementById("authorsGrid");
+
+    const authorsNoResults =
+        document.getElementById("authorsNoResults");
+
+
+    if (
+        !authorSearch ||
+        !authorsGrid ||
+        !authorsNoResults
+    ) {
+        return;
+    }
+
+
+    const authorCards =
+        authorsGrid.querySelectorAll(".author-card");
+
+
+    authorSearch.addEventListener(
+        "input",
+        function () {
+
+            const searchValue =
+                authorSearch.value
+                    .toLowerCase()
+                    .trim();
+
+
+            let visibleAuthors = 0;
+
+
+            authorCards.forEach(function (card) {
+
+                const name =
+                    (
+                        card.dataset.name || ""
+                    ).toLowerCase();
+
+
+                if (
+                    name.includes(searchValue)
+                ) {
+
+                    card.style.display = "";
+
+                    visibleAuthors++;
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+
+            if (visibleAuthors === 0) {
+
+                authorsNoResults.style.display =
+                    "block";
+
+            } else {
+
+                authorsNoResults.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+});
+
+/* =========================================
+   NEWS SEARCH + FILTER
+========================================= */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const newsSearch =
+        document.getElementById("newsSearch");
+
+    const newsGrid =
+        document.getElementById("newsGrid");
+
+    const noResults =
+        document.getElementById("newsNoResults");
+
+    const filterButtons =
+        document.querySelectorAll(
+            ".news-filter-btn"
+        );
+
+
+    if (
+        !newsSearch ||
+        !newsGrid
+    ) {
+        return;
+    }
+
+
+    const newsCards =
+        newsGrid.querySelectorAll(".news-card");
+
+
+    let selectedCategory = "all";
+
+
+    function filterNews() {
+
+        const search =
+            newsSearch.value
+                .toLowerCase()
+                .trim();
+
+
+        let visible = 0;
+
+
+        newsCards.forEach(function (card) {
+
+            const title =
+                (
+                    card.dataset.title || ""
+                ).toLowerCase();
+
+
+            const category =
+                (
+                    card.dataset.category || ""
+                ).toLowerCase();
+
+
+            const categoryFilter =
+                selectedCategory.toLowerCase();
+
+
+            const matchesSearch =
+                title.includes(search);
+
+
+            const matchesCategory =
+                categoryFilter === "all" ||
+                category === categoryFilter;
+
+
+            if (
+                matchesSearch &&
+                matchesCategory
+            ) {
+
+                card.style.display = "";
+
+                visible++;
+
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+
+        if (visible === 0) {
+
+            noResults.style.display =
+                "block";
+
+        } else {
+
+            noResults.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    newsSearch.addEventListener(
+        "input",
+        filterNews
+    );
+
+
+    filterButtons.forEach(function (button) {
+
+        button.addEventListener(
+            "click",
+            function () {
+
+                filterButtons.forEach(
+                    function (btn) {
+
+                        btn.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+                button.classList.add(
+                    "active"
+                );
+
+
+                selectedCategory =
+                    button.dataset.category ||
+                    "all";
+
+
+                filterNews();
+
+            }
+        );
+
+    });
+
+});

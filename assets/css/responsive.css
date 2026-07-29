@@ -525,3 +525,986 @@
     }
 
 }
+
+/* =========================================
+   BOOK DETAILS RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .book-details-grid {
+        grid-template-columns: 330px 1fr;
+
+        gap: 50px;
+    }
+
+    .book-details-cover {
+        height: 500px;
+    }
+
+    .book-details-content h1 {
+        font-size: 42px;
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .book-details-grid {
+        grid-template-columns: 1fr;
+
+        gap: 50px;
+    }
+
+    .book-details-cover {
+        width: 100%;
+        max-width: 430px;
+
+        height: 560px;
+
+        margin: 0 auto;
+    }
+
+    .book-details-content {
+        padding-top: 0;
+    }
+
+    .book-author-box {
+        grid-template-columns: 1fr;
+
+        text-align: center;
+
+        justify-items: center;
+    }
+
+    .book-author-info {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .book-details-section {
+        padding: 110px 0 70px;
+    }
+
+    .book-details-cover {
+        height: 470px;
+    }
+
+    .book-details-content h1 {
+        font-size: 34px;
+    }
+
+    .book-details-meta {
+        gap: 25px;
+    }
+
+    .book-details-buttons {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .book-details-buttons .btn,
+    .book-contact-btn {
+        justify-content: center;
+
+        width: 100%;
+    }
+
+    .book-author-section {
+        padding: 65px 0;
+    }
+
+    .book-author-box {
+        padding: 30px 22px;
+    }
+
+    .book-author-photo {
+        width: 150px;
+        height: 150px;
+    }
+
+}
+
+/* =========================================
+   AUTHORS RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .authors-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .authors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .authors-search {
+        max-width: none;
+    }
+
+    .author-card-photo {
+        height: 380px;
+    }
+
+    .authors-cta-inner {
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .authors-page-section {
+        padding: 65px 0 80px;
+    }
+
+    .author-card-photo {
+        height: 350px;
+    }
+
+    .author-card-content {
+        padding: 22px;
+    }
+
+    .author-card-footer {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .authors-cta {
+        padding: 60px 0;
+    }
+
+    .authors-cta h2 {
+        font-size: 29px;
+    }
+
+}
+
+/* =========================================
+   AUTHOR DETAILS RESPONSIVE
+========================================= */
+
+@media (max-width: 1050px) {
+
+    .author-profile {
+        grid-template-columns: 280px 1fr;
+
+        gap: 50px;
+    }
+
+    .author-profile-photo {
+        width: 280px;
+        height: 350px;
+    }
+
+    .author-profile-content h1 {
+        font-size: 44px;
+    }
+
+    .author-books-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .author-profile {
+        grid-template-columns: 1fr;
+
+        gap: 40px;
+
+        text-align: center;
+    }
+
+    .author-profile-photo {
+        width: 280px;
+        height: 350px;
+
+        margin: 0 auto;
+    }
+
+    .author-profile-content {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+    }
+
+    .author-profile-biography {
+        max-width: 650px;
+    }
+
+    .author-profile-stats {
+        justify-content: center;
+    }
+
+    .author-books-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .author-books-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .author-details-cta-inner {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .author-details-section {
+        padding: 110px 0 70px;
+    }
+
+    .author-profile-photo {
+        width: 240px;
+        height: 300px;
+    }
+
+    .author-profile-content h1 {
+        font-size: 36px;
+    }
+
+    .author-profile-stats {
+        gap: 25px;
+    }
+
+    .author-books-section {
+        padding: 65px 0 80px;
+    }
+
+    .author-books-heading h2 {
+        font-size: 31px;
+    }
+
+    .author-books-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .author-book-cover {
+        height: 390px;
+    }
+
+    .author-details-cta {
+        padding: 60px 0;
+    }
+
+    .author-details-cta h2 {
+        font-size: 29px;
+    }
+
+}
+
+/* =========================================
+   FEATURED AUTHORS RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .featured-authors-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .section-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .section-header h2 {
+        font-size: 34px;
+    }
+
+}
+
+
+@media (max-width: 500px) {
+
+    .featured-authors {
+        padding: 70px 0;
+    }
+
+    .featured-authors-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .featured-author-photo {
+        height: 360px;
+    }
+
+    .section-header h2 {
+        font-size: 30px;
+    }
+
+}
+
+/* =========================================
+   NEWS RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .news-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .news-toolbar {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .news-search {
+        max-width: none;
+    }
+
+}
+
+
+@media (max-width: 550px) {
+
+    .news-page-section {
+        padding: 65px 0 80px;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-card-image {
+        height: 260px;
+    }
+
+}
+
+/* =========================================
+   NEWS DETAILS RESPONSIVE
+========================================= */
+
+@media (max-width: 850px) {
+
+    .news-details-hero h1 {
+        font-size: 43px;
+    }
+
+
+    .news-details-layout {
+        grid-template-columns: 1fr;
+
+        gap: 45px;
+    }
+
+
+    .news-details-sidebar {
+        display: grid;
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .news-details-hero {
+        padding: 115px 0 60px;
+    }
+
+
+    .news-details-hero h1 {
+        font-size: 34px;
+    }
+
+
+    .news-details-meta {
+        flex-direction: column;
+
+        gap: 10px;
+    }
+
+
+    .news-details-content-section {
+        padding: 60px 0 80px;
+    }
+
+
+    .news-details-image {
+        border-radius: 12px;
+
+        margin-bottom: 28px;
+    }
+
+
+    .news-details-excerpt {
+        padding: 20px;
+
+        font-size: 17px;
+    }
+
+
+    .news-details-text {
+        font-size: 14px;
+
+        line-height: 1.9;
+    }
+
+
+    .news-details-sidebar {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+/* =========================================
+   CONTACT RESPONSIVE
+========================================= */
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .contact-layout {
+        grid-template-columns: 1fr;
+
+        gap: 60px;
+    }
+
+
+    .contact-info {
+        max-width: 750px;
+        margin: 0 auto;
+    }
+
+
+    .contact-form-wrapper {
+        max-width: 750px;
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+        margin: 0 auto;
+    }
+
+}
+
+
+/* =========================================
+   SMALL TABLET
+========================================= */
+
+@media (max-width: 768px) {
+
+    .contact-page-hero {
+        padding: 130px 0 70px;
+    }
+
+
+    .contact-section {
+        padding: 75px 0;
+    }
+
+
+    .contact-info h2 {
+        font-size: 36px;
+    }
+
+
+    .contact-form-wrapper {
+        padding: 35px 28px;
+    }
+
+
+    .contact-map-section {
+        padding-bottom: 75px;
+    }
+
+
+    .contact-map {
+        height: 370px;
+    }
+
+
+    .contact-map-header h2 {
+        font-size: 30px;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    /* HERO */
+
+    .contact-page-hero {
+        padding: 115px 0 60px;
+    }
+
+
+    .contact-page-hero h1 {
+        font-size: 36px;
+    }
+
+
+    .contact-page-hero p {
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+
+    /* CONTACT */
+
+    .contact-section {
+        padding: 60px 0;
+    }
+
+
+    .contact-layout {
+        gap: 45px;
+    }
+
+
+    /* INFO */
+
+    .contact-info h2 {
+        font-size: 32px;
+    }
+
+
+    .contact-intro {
+        font-size: 13px;
+    }
+
+
+    .contact-info-item {
+        gap: 14px;
+
+        padding: 16px 0;
+    }
+
+
+    .contact-icon {
+        width: 43px;
+        height: 43px;
+    }
+
+
+    .contact-info-item a,
+    .contact-info-item p {
+        font-size: 13px;
+    }
+
+
+    /* FORM */
+
+    .contact-form-wrapper {
+        padding: 27px 20px;
+
+        border-radius: 15px;
+    }
+
+
+    .contact-form-header h2 {
+        font-size: 30px;
+    }
+
+
+    .contact-form-header p {
+        font-size: 12px;
+
+        margin-bottom: 25px;
+    }
+
+
+    .contact-form {
+        grid-template-columns: 1fr;
+
+        gap: 17px;
+    }
+
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+
+    .form-group input {
+        height: 48px;
+    }
+
+
+    .form-group textarea {
+        min-height: 135px;
+    }
+
+
+    /* BUTTON */
+
+    .contact-submit {
+        grid-column: auto;
+
+        width: 100%;
+
+        padding: 14px 20px;
+    }
+
+
+    /* ALERT */
+
+    .contact-alert {
+        font-size: 11px;
+
+        padding: 12px;
+    }
+
+
+    /* MAP */
+
+    .contact-map-section {
+        padding-bottom: 60px;
+    }
+
+
+    .contact-map-header {
+        margin-bottom: 20px;
+    }
+
+
+    .contact-map-header h2 {
+        font-size: 28px;
+    }
+
+
+    .contact-map {
+        height: 300px;
+
+        border-radius: 12px;
+    }
+
+}
+
+
+/* =========================================
+   VERY SMALL PHONES
+========================================= */
+
+@media (max-width: 400px) {
+
+    .contact-page-hero h1 {
+        font-size: 31px;
+    }
+
+
+    .contact-info h2 {
+        font-size: 29px;
+    }
+
+
+    .contact-form-wrapper {
+        padding: 23px 16px;
+    }
+
+
+    .contact-form-header h2 {
+        font-size: 27px;
+    }
+
+
+    .contact-map {
+        height: 270px;
+    }
+
+}
+
+/* =========================================
+   SEARCH RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+
+    .search-books-grid,
+    .search-authors-grid,
+    .search-news-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .search-page-hero {
+        padding: 130px 0 65px;
+    }
+
+    .search-section {
+        padding: 65px 0 80px;
+    }
+
+    .search-page-form {
+        margin-bottom: 60px;
+    }
+
+    .search-results-heading h2 {
+        font-size: 30px;
+    }
+
+    .search-books-grid,
+    .search-authors-grid,
+    .search-news-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-results-group {
+        margin-bottom: 55px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .search-page-form {
+        flex-direction: column;
+    }
+
+    .search-page-form button {
+        width: 100%;
+    }
+
+    .search-results-heading h2 {
+        font-size: 26px;
+    }
+
+    .search-group-title h3 {
+        font-size: 22px;
+    }
+
+    .search-book-card {
+        grid-template-columns: 105px 1fr;
+
+        gap: 15px;
+
+        padding: 14px;
+    }
+
+    .search-book-cover {
+        height: 150px;
+    }
+
+    .search-author-card {
+        align-items: flex-start;
+    }
+
+    .search-news-image {
+        height: 210px;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .search-section {
+        padding-top: 50px;
+    }
+
+    .search-page-form {
+        margin-bottom: 45px;
+    }
+
+    .search-book-card {
+        grid-template-columns: 90px 1fr;
+    }
+
+    .search-book-cover {
+        height: 130px;
+    }
+
+    .search-book-info h4 {
+        font-size: 16px;
+    }
+
+}
+
+/* =========================================
+   BUY RESPONSIVE
+========================================= */
+
+@media (max-width: 1000px) {
+
+    .buy-layout {
+        grid-template-columns: 1fr;
+
+        gap: 50px;
+    }
+
+    .buy-book {
+        position: static;
+
+        max-width: 600px;
+
+        width: 100%;
+
+        box-sizing: border-box;
+
+        margin: auto;
+    }
+
+    .buy-book-cover {
+        max-width: 240px;
+        height: 330px;
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .buy-page-hero {
+        padding: 130px 0 65px;
+    }
+
+    .buy-page-hero h1 {
+        font-size: 38px;
+    }
+
+    .buy-section {
+        padding: 65px 0 80px;
+    }
+
+    .buy-form-wrapper {
+        padding: 35px 28px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .buy-page-hero h1 {
+        font-size: 32px;
+    }
+
+    .buy-page-hero p {
+        font-size: 12px;
+    }
+
+    .buy-book {
+        padding: 22px;
+    }
+
+    .buy-book-cover {
+        max-width: 200px;
+        height: 280px;
+    }
+
+    .buy-book-info h2 {
+        font-size: 24px;
+    }
+
+    .buy-form-wrapper {
+        padding: 27px 20px;
+
+        border-radius: 14px;
+    }
+
+    .buy-form-header h2 {
+        font-size: 28px;
+    }
+
+    .buy-form {
+        grid-template-columns: 1fr;
+
+        gap: 17px;
+    }
+
+    .buy-form-group.full {
+        grid-column: auto;
+    }
+
+    .buy-summary {
+        grid-column: auto;
+    }
+
+    .buy-submit {
+        grid-column: auto;
+    }
+
+    .cash-payment-note {
+        grid-column: auto;
+    }
+
+}
+
+
+@media (max-width: 400px) {
+
+    .buy-page-hero h1 {
+        font-size: 29px;
+    }
+
+    .buy-form-wrapper {
+        padding: 22px 16px;
+    }
+
+    .buy-book-cover {
+        max-width: 180px;
+        height: 250px;
+    }
+
+}

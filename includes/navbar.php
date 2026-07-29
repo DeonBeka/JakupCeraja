@@ -31,7 +31,9 @@
         <div class="nav-right">
 
             <button class="search-btn">
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <a href="search.php"  aria-label="Kërko">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </a>
             </button>
 
             <button class="menu-btn">

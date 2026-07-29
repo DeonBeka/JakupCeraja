@@ -685,76 +685,118 @@ include 'includes/navbar.php';
     </div>
 
     </section>
-    <section class="featured-authors">
+    <!-- =========================================
+     FEATURED AUTHORS
+========================================= -->
+
+<section class="featured-authors">
 
     <div class="container">
 
-        <div class="section-heading">
+        <!-- SECTION HEADER -->
 
-            <span class="section-tag">
-                ZËRAT E LETËRSISË
-            </span>
+        <div class="section-header">
 
-            <h2>
-                Autorët Tanë
-            </h2>
+            <div>
 
-            <p>
-                Njihuni me disa nga autorët që kanë pasuruar
-                katalogun e Shtëpisë Botuese "Jakup Ceraja".
-            </p>
+                <span class="section-tag">
+                    AUTORËT TANË
+                </span>
+
+                <h2>
+                    Zëra që pasurojnë letërsinë
+                </h2>
+
+                <p>
+                    Njihuni me autorët dhe krijimtarinë
+                    që janë pjesë e botimeve tona.
+                </p>
+
+            </div>
+
+            <a
+                href="authors.php"
+                class="section-link"
+            >
+
+                Shiko të gjithë autorët
+
+                <i class="fa-solid fa-arrow-right"></i>
+
+            </a>
 
         </div>
 
 
-        <div class="authors-grid">
+        <!-- AUTHORS -->
+
+        <div class="featured-authors-grid">
 
             <?php
 
-            $authors_query = "
+            $featured_authors_query = "
+
                 SELECT
-                    authors.*,
-                    COUNT(books.id) AS books_count
+                    id,
+                    fullname,
+                    photo,
+                    biography
 
                 FROM authors
 
-                LEFT JOIN books
-                    ON authors.id = books.author_id
+                ORDER BY id DESC
 
-                GROUP BY authors.id
+                LIMIT 4
 
-                ORDER BY books_count DESC, authors.id ASC
-
-                LIMIT 6
             ";
 
-            $authors_result = mysqli_query($conn, $authors_query);
+            $featured_authors_result = mysqli_query(
+                $conn,
+                $featured_authors_query
+            );
 
 
             if (
-                $authors_result &&
-                mysqli_num_rows($authors_result) > 0
+                $featured_authors_result &&
+                mysqli_num_rows($featured_authors_result) > 0
             ):
 
-                while ($author = mysqli_fetch_assoc($authors_result)):
+                while (
+                    $author =
+                    mysqli_fetch_assoc(
+                        $featured_authors_result
+                    )
+                ):
 
             ?>
 
-                <article class="author-card">
+                <!-- AUTHOR CARD -->
 
+                <article class="featured-author-card">
 
-                    <div class="author-image">
+                    <!-- PHOTO -->
+
+                    <div class="featured-author-photo">
 
                         <?php if (!empty($author['photo'])): ?>
 
                             <img
-                                src="assets/uploads/authors/<?php echo htmlspecialchars($author['photo']); ?>"
-                                alt="<?php echo htmlspecialchars($author['fullname']); ?>"
+                                src="assets/uploads/<?php
+                                    echo htmlspecialchars(
+                                        $author['photo']
+                                    );
+                                ?>"
+                                alt="<?php
+                                    echo htmlspecialchars(
+                                        $author['fullname']
+                                    );
+                                ?>"
+                                loading="lazy"
                             >
 
                         <?php else: ?>
 
-                            <div class="author-placeholder">
+                            <div class="featured-author-placeholder">
 
                                 <i class="fa-solid fa-user"></i>
 
@@ -763,10 +805,14 @@ include 'includes/navbar.php';
                         <?php endif; ?>
 
 
-                        <div class="author-overlay">
+                        <!-- OVERLAY -->
+
+                        <div class="featured-author-overlay">
 
                             <a
-                                href="author-details.php?id=<?php echo $author['id']; ?>"
+                                href="author-details.php?id=<?php
+                                    echo (int)$author['id'];
+                                ?>"
                                 aria-label="Shiko autorin"
                             >
 
@@ -779,54 +825,78 @@ include 'includes/navbar.php';
                     </div>
 
 
-                    <div class="author-content">
+                    <!-- CONTENT -->
+
+                    <div class="featured-author-content">
+
+                        <span>
+                            AUTOR
+                        </span>
 
                         <h3>
+
                             <?php
                             echo htmlspecialchars(
                                 $author['fullname']
                             );
                             ?>
+
                         </h3>
 
 
-                        <p class="author-bio">
+                        <?php if (!empty($author['biography'])): ?>
 
-                            <?php
+                            <p>
 
-                            echo htmlspecialchars(
-                                mb_strimwidth(
-                                    $author['biography'],
-                                    0,
-                                    110,
-                                    '...'
-                                )
-                            );
+                                <?php
 
-                            ?>
+                                $short_bio =
+                                    $author['biography'];
 
-                        </p>
+                                echo htmlspecialchars(
+                                    mb_substr(
+                                        $short_bio,
+                                        0,
+                                        110
+                                    )
+                                );
+
+                                if (
+                                    mb_strlen($short_bio) > 110
+                                ) {
+                                    echo '...';
+                                }
+
+                                ?>
+
+                            </p>
+
+                        <?php else: ?>
+
+                            <p>
+                                Autor i Shtëpisë Botuese
+                                "Jakup Ceraja".
+                            </p>
+
+                        <?php endif; ?>
 
 
-                        <div class="author-books">
+                        <a
+                            href="author-details.php?id=<?php
+                                echo (int)$author['id'];
+                            ?>"
+                        >
 
-                            <i class="fa-solid fa-book"></i>
+                            Shiko profilin
 
-                            <?php
-                            echo (int) $author['books_count'];
-                            ?>
+                            <i class="fa-solid fa-arrow-right"></i>
 
-                            <?php
-                            echo $author['books_count'] == 1
-                                ? 'libër'
-                                : 'libra';
-                            ?>
-
-                        </div>
+                        </a>
 
                     </div>
 
                 </article>
+
 
             <?php
 
@@ -836,33 +906,27 @@ include 'includes/navbar.php';
 
             ?>
 
-                <p class="no-books">
-                    Aktualisht nuk ka autorë të publikuar.
-                </p>
+                <div class="featured-authors-empty">
+
+                    <i class="fa-solid fa-user-pen"></i>
+
+                    <h3>
+                        Autorët do të shfaqen së shpejti
+                    </h3>
+
+                    <p>
+                        Aktualisht nuk ka autorë të regjistruar.
+                    </p>
+
+                </div>
 
             <?php endif; ?>
 
         </div>
 
-
-        <div class="authors-button">
-
-            <a
-                href="authors.php"
-                class="btn btn-outline"
-            >
-
-                Shiko të gjithë autorët
-
-                <i class="fa-solid fa-arrow-right"></i>
-
-            </a>
-
-        </div>
-
     </div>
 
-    </section>  
+    </section> 
    <section class="gallery-section">
 
     <div class="container">
