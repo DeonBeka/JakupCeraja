@@ -139,3 +139,176 @@ document.addEventListener("DOMContentLoaded", function () {
     startAutoSlide();
 
 });
+
+/* ==============================
+   GALLERY FILTERS
+============================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const filterButtons =
+        document.querySelectorAll(".gallery-filter");
+
+    const galleryItems =
+        document.querySelectorAll(".gallery-item");
+
+
+    filterButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const filter =
+                button.getAttribute("data-filter");
+
+
+            filterButtons.forEach(function (item) {
+
+                item.classList.remove("active");
+
+            });
+
+
+            button.classList.add("active");
+
+
+            galleryItems.forEach(function (item) {
+
+                const category =
+                    item.getAttribute("data-category");
+
+
+                if (
+                    filter === "all" ||
+                    category === filter
+                ) {
+
+                    item.classList.remove("hidden");
+
+                    item.classList.add("show");
+
+                } else {
+
+                    item.classList.add("hidden");
+
+                    item.classList.remove("show");
+
+                }
+
+            });
+
+        });
+
+    });
+
+});
+
+
+/* ==============================
+   GALLERY LIGHTBOX
+============================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const lightbox =
+        document.getElementById("galleryLightbox");
+
+    const lightboxImage =
+        document.getElementById("lightboxImage");
+
+    const lightboxTitle =
+        document.getElementById("lightboxTitle");
+
+    const closeButton =
+        document.querySelector(".lightbox-close");
+
+    const viewButtons =
+        document.querySelectorAll(".gallery-view");
+
+
+    if (!lightbox) {
+        return;
+    }
+
+
+    viewButtons.forEach(function (button) {
+
+        button.addEventListener("click", function (event) {
+
+            event.stopPropagation();
+
+
+            const image =
+                button.getAttribute("data-image");
+
+            const title =
+                button.getAttribute("data-title");
+
+
+            lightboxImage.src = image;
+
+            lightboxImage.alt = title;
+
+            lightboxTitle.textContent = title;
+
+
+            lightbox.classList.add("active");
+
+            document.body.style.overflow = "hidden";
+
+        });
+
+    });
+
+
+    function closeLightbox() {
+
+        lightbox.classList.remove("active");
+
+        document.body.style.overflow = "";
+
+        lightboxImage.src = "";
+
+    }
+
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            closeLightbox
+        );
+
+    }
+
+
+    lightbox.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === lightbox) {
+
+                closeLightbox();
+
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                lightbox.classList.contains("active")
+            ) {
+
+                closeLightbox();
+
+            }
+
+        }
+    );
+
+});

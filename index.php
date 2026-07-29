@@ -862,7 +862,150 @@ include 'includes/navbar.php';
 
     </div>
 
-    </section>           
+    </section>  
+   <section class="gallery-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+                NGA AKTIVITETET TONA
+            </span>
+
+            <h2>
+                Galeria
+            </h2>
+
+            <p>
+                Momente nga aktivitetet, promovimet dhe
+                botimet e Shtëpisë Botuese "Jakup Ceraja".
+            </p>
+
+        </div>
+
+
+        <div class="gallery-grid">
+
+            <?php
+
+            $gallery_query = "
+                SELECT id, image, title, created_at
+                FROM gallery
+                ORDER BY id DESC
+                LIMIT 12
+            ";
+
+            $gallery_result = mysqli_query(
+                $conn,
+                $gallery_query
+            );
+
+
+            if (
+                $gallery_result &&
+                mysqli_num_rows($gallery_result) > 0
+            ):
+
+                while (
+                    $gallery_item =
+                    mysqli_fetch_assoc($gallery_result)
+                ):
+
+            ?>
+
+                <article class="gallery-item">
+
+                    <img
+                        src="assets/uploads/gallery/<?php echo htmlspecialchars($gallery_item['image']); ?>"
+                        alt="<?php echo htmlspecialchars($gallery_item['title']); ?>"
+                        loading="lazy"
+                    >
+
+
+                    <div class="gallery-overlay">
+
+                        <div class="gallery-info">
+
+                            <h3>
+                                <?php
+                                echo htmlspecialchars(
+                                    $gallery_item['title']
+                                );
+                                ?>
+                            </h3>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="gallery-view"
+                            data-image="assets/uploads/gallery/<?php echo htmlspecialchars($gallery_item['image']); ?>"
+                            data-title="<?php echo htmlspecialchars($gallery_item['title']); ?>"
+                            aria-label="Shiko fotografinë"
+                        >
+
+                            <i class="fa-solid fa-expand"></i>
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+            <?php
+
+                endwhile;
+
+            else:
+
+            ?>
+
+                <p class="no-books">
+                    Aktualisht nuk ka fotografi në galeri.
+                </p>
+
+            <?php endif; ?>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- GALLERY LIGHTBOX -->
+
+<div
+    class="gallery-lightbox"
+    id="galleryLightbox"
+>
+
+    <button
+        type="button"
+        class="lightbox-close"
+        aria-label="Mbyll"
+    >
+
+        <i class="fa-solid fa-xmark"></i>
+
+    </button>
+
+
+    <div class="lightbox-content">
+
+        <img
+            src=""
+            alt=""
+            id="lightboxImage"
+        >
+
+        <h3 id="lightboxTitle"></h3>
+
+    </div>
+
+</div>
 </main>
 
 <?php
