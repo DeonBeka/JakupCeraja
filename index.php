@@ -337,7 +337,7 @@ include 'includes/navbar.php';
     </div>
 
     </section>
-    <section class="categories-section">
+   <section class="categories-section">
 
     <div class="container">
 
@@ -357,44 +357,112 @@ include 'includes/navbar.php';
 
         </div>
 
+
         <div class="categories-grid">
 
             <?php
 
+            /*
+            ==========================================
+            SHFAQ VETËM 6 KATEGORITË
+            ME MË SHUMË LIBRA
+            ==========================================
+            */
+
             $categories_query = "
-                SELECT *
+
+                SELECT
+
+                    categories.id,
+                    categories.name,
+                    categories.icon,
+
+                    COUNT(books.id) AS book_count
+
                 FROM categories
-                ORDER BY id ASC
+
+                LEFT JOIN books
+                    ON books.category_id = categories.id
+
+                GROUP BY
+                    categories.id,
+                    categories.name,
+                    categories.icon
+
+                ORDER BY
+                    book_count DESC,
+                    categories.id ASC
+
+                LIMIT 6
+
             ";
 
-            $categories_result = mysqli_query($conn, $categories_query);
 
-            if ($categories_result && mysqli_num_rows($categories_result) > 0):
+            $categories_result = mysqli_query(
+                $conn,
+                $categories_query
+            );
 
-                while ($category = mysqli_fetch_assoc($categories_result)):
+
+            if (
+                $categories_result &&
+                mysqli_num_rows($categories_result) > 0
+            ):
+
+                while (
+                    $category =
+                    mysqli_fetch_assoc(
+                        $categories_result
+                    )
+                ):
 
             ?>
 
                 <a
-                    href="books.php?category=<?php echo $category['id']; ?>"
+                    href="books.php?category=<?php
+                        echo (int)$category['id'];
+                    ?>"
                     class="category-card"
                 >
 
                     <div class="category-icon">
 
-                        <i class="fa-solid fa-<?php echo htmlspecialchars($category['icon']); ?>"></i>
+                        <?php if (!empty($category['icon'])): ?>
+
+                            <i class="<?php
+                                echo htmlspecialchars(
+                                    $category['icon']
+                                );
+                            ?>"></i>
+
+                        <?php else: ?>
+
+                            <i class="fa-solid fa-book"></i>
+
+                        <?php endif; ?>
 
                     </div>
 
+
                     <h3>
-                        <?php echo htmlspecialchars($category['name']); ?>
+
+                        <?php
+                        echo htmlspecialchars(
+                            $category['name']
+                        );
+                        ?>
+
                     </h3>
 
+
                     <span class="category-arrow">
+
                         <i class="fa-solid fa-arrow-right"></i>
+
                     </span>
 
                 </a>
+
 
             <?php
 
@@ -408,7 +476,7 @@ include 'includes/navbar.php';
 
     </div>
 
-    </section>
+</section>
     <section class="why-us">
 
     <div class="container">
@@ -781,7 +849,7 @@ include 'includes/navbar.php';
                         <?php if (!empty($author['photo'])): ?>
 
                             <img
-                                src="assets/uploads/<?php
+                                src="assets/uploads/authors/<?php
                                     echo htmlspecialchars(
                                         $author['photo']
                                     );

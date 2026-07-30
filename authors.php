@@ -182,7 +182,7 @@ include 'includes/navbar.php';
                             <?php if (!empty($author['photo'])): ?>
 
                                 <img
-                                    src="assets/uploads/<?php
+                                    src="assets/uploads/authors/<?php
                                         echo htmlspecialchars(
                                             $author['photo']
                                         );

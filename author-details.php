@@ -204,7 +204,7 @@ if ($books_result) {
                     <?php if (!empty($author['photo'])): ?>
 
                         <img
-                            src="assets/uploads/<?php
+                            src="assets/uploads/authors/<?php
                                 echo htmlspecialchars(
                                     $author['photo']
                                 );
@@ -388,11 +388,11 @@ if ($books_result) {
                                 <?php if (!empty($book['cover'])): ?>
 
                                     <img
-                                        src="assets/uploads/<?php
-                                            echo htmlspecialchars(
-                                                $book['cover']
-                                            );
-                                        ?>"
+                                        src="<?php
+                                        echo htmlspecialchars(
+                                            $book['cover']
+                                        );
+                                    ?>"
                                         alt="<?php
                                             echo htmlspecialchars(
                                                 $book['title']

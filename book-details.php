@@ -261,7 +261,7 @@ $book = mysqli_fetch_assoc(
                             <?php if (!empty($book['author_photo'])): ?>
 
                                 <img
-                                    src="assets/uploads/<?php
+                                    src="assets/uploads/authors/<?php
                                         echo htmlspecialchars(
                                             $book['author_photo']
                                         );
