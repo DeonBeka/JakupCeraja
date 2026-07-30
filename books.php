@@ -220,7 +220,7 @@ include 'includes/navbar.php';
                             <?php if (!empty($book['cover'])): ?>
 
                                 <img
-                                    src="assets/uploads/<?php
+                                    src="<?php
                                         echo htmlspecialchars(
                                             $book['cover']
                                         );

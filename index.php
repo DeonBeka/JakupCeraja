@@ -264,7 +264,7 @@ include 'includes/navbar.php';
                     <div class="book-cover">
 
                         <img
-                            src="assets/uploads/books/<?php echo htmlspecialchars($book['cover']); ?>"
+                           src="<?php echo htmlspecialchars($book['cover']); ?>"
                             alt="<?php echo htmlspecialchars($book['title']); ?>"
                         >
 
@@ -591,7 +591,7 @@ include 'includes/navbar.php';
                     <div class="latest-book-image">
 
                         <img
-                            src="assets/uploads/books/<?php echo htmlspecialchars($book['cover']); ?>"
+                            src="<?php echo htmlspecialchars($book['cover']); ?>"
                             alt="<?php echo htmlspecialchars($book['title']); ?>"
                         >
 
