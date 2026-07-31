@@ -6984,3 +6984,247 @@ main{
     }
 
 }
+
+/* ==========================================
+   HERO MOBILE - FINAL FIX
+========================================== */
+
+@media (max-width: 600px) {
+
+    .hero-slider {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: auto;
+        min-height: calc(100svh - 70px);
+        overflow: hidden;
+    }
+
+    .hero-slides {
+        position: relative;
+        display: block;
+        width: 100%;
+        min-height: calc(100svh - 70px);
+    }
+
+    .hero-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+
+        width: 100%;
+        min-height: calc(100svh - 70px);
+
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+
+        opacity: 0;
+        visibility: hidden;
+
+        transform: translateX(35px);
+
+        z-index: 1;
+    }
+
+    .hero-slide.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateX(0);
+
+        z-index: 5;
+    }
+
+
+    /* CONTENT */
+
+    .hero-slide-content {
+        position: relative;
+        z-index: 6;
+
+        width: 100%;
+
+        display: flex !important;
+        flex-direction: column !important;
+
+        align-items: center !important;
+        justify-content: center !important;
+
+        gap: 20px;
+
+        text-align: center;
+
+        padding: 80px 45px 90px;
+    }
+
+
+    /* TEXT */
+
+    .hero-slide .hero-text {
+        position: relative;
+        z-index: 10;
+
+        display: block !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        flex: none !important;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .hero-subtitle {
+        display: inline-block !important;
+
+        font-size: 10px;
+        line-height: 1.4;
+
+        margin-bottom: 12px;
+    }
+
+    .hero-slide h1 {
+        display: block !important;
+
+        font-size: 32px !important;
+        line-height: 1.15;
+
+        margin: 0 0 16px;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .hero-slide p {
+        display: block !important;
+
+        width: 100%;
+        max-width: 100%;
+
+        font-size: 15px;
+        line-height: 1.6;
+
+        margin: 0 auto 22px;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+
+    /* BUTTON */
+
+    .hero-slide .btn {
+        display: inline-flex !important;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 9px;
+
+        padding: 12px 20px;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+
+    /* IMAGE */
+
+    .hero-slide .hero-image {
+        position: relative;
+        z-index: 7;
+
+        display: flex !important;
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+        flex: none !important;
+
+        align-items: center;
+        justify-content: center;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    .hero-slide .hero-image img {
+        display: block !important;
+
+        width: auto !important;
+        max-width: 65% !important;
+
+        height: auto !important;
+        max-height: 240px !important;
+
+        object-fit: contain;
+
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+
+    /* ARROWS */
+
+    .hero-arrow {
+        position: absolute;
+
+        top: 50%;
+        transform: translateY(-50%);
+
+        z-index: 30;
+
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+
+        width: 38px;
+        height: 38px;
+
+        padding: 0;
+    }
+
+    .hero-prev {
+        left: 8px;
+    }
+
+    .hero-next {
+        right: 8px;
+    }
+
+
+    /* DOTS */
+
+    .hero-dots {
+        position: absolute;
+
+        left: 50%;
+        bottom: 15px;
+
+        transform: translateX(-50%);
+
+        z-index: 30;
+
+        display: flex !important;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 7px;
+    }
+
+    .hero-dot {
+        display: block !important;
+
+        width: 8px;
+        height: 8px;
+    }
+
+    .hero-dot.active {
+        width: 24px;
+    }
+
+}

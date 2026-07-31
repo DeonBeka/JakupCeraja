@@ -656,3 +656,59 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
+/* ==========================
+   MOBILE MENU
+========================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const menuBtn = document.querySelector(".menu-btn");
+    const navbar = document.querySelector(".navbar");
+
+    if (!menuBtn || !navbar) {
+        return;
+    }
+
+    menuBtn.addEventListener("click", function () {
+
+        navbar.classList.toggle("menu-open");
+
+        const icon = menuBtn.querySelector("i");
+
+        if (navbar.classList.contains("menu-open")) {
+
+            icon.classList.remove("fa-bars");
+            icon.classList.add("fa-xmark");
+
+        } else {
+
+            icon.classList.remove("fa-xmark");
+            icon.classList.add("fa-bars");
+
+        }
+
+    });
+
+
+    /* CLOSE MENU WHEN LINK IS CLICKED */
+
+    const navLinks =
+        navbar.querySelectorAll(".nav-links a");
+
+    navLinks.forEach(function (link) {
+
+        link.addEventListener("click", function () {
+
+            navbar.classList.remove("menu-open");
+
+            const icon = menuBtn.querySelector("i");
+
+            icon.classList.remove("fa-xmark");
+            icon.classList.add("fa-bars");
+
+        });
+
+    });
+
+});

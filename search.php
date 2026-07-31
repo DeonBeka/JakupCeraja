@@ -271,9 +271,16 @@ if (!empty($search)) {
                                         <?php if (!empty($book['cover'])): ?>
 
                                             <img
-                                                src="assets/images/books/<?php echo htmlspecialchars($book['cover']); ?>"
-                                                alt="<?php echo htmlspecialchars($book['title']); ?>"
-                                                loading="lazy"
+                                                src="<?php
+                                                    echo htmlspecialchars(
+                                                        $book['cover']
+                                                    );
+                                                ?>"
+                                                alt="<?php
+                                                    echo htmlspecialchars(
+                                                        $book['title']
+                                                    );
+                                                ?>"
                                             >
 
                                         <?php else: ?>
@@ -389,7 +396,7 @@ if (!empty($search)) {
                                         <?php if (!empty($author['photo'])): ?>
 
                                             <img
-                                                src="assets/images/authors/<?php echo htmlspecialchars($author['photo']); ?>"
+                                                src="assets/uploads/authors/<?php echo htmlspecialchars($author['photo']); ?>"
                                                 alt="<?php echo htmlspecialchars($author['fullname']); ?>"
                                                 loading="lazy"
                                             >
@@ -657,7 +664,7 @@ if (!empty($search)) {
 
 <?php include 'includes/footer.php'; ?>
 
-<script src="assets/js/script.js"></script>
+
 
 </body>
 </html>
