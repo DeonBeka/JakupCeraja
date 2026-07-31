@@ -350,22 +350,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <div class="buy-book-cover">
 
-                        <?php if (!empty($book['cover'])): ?>
+                         <?php if (!empty($book['cover'])): ?>
 
-                            <img
-                                src="assets/uploads/<?php
-                                    echo htmlspecialchars(
-                                        $book['cover']
-                                    );
-                                ?>"
-                                alt="<?php
-                                    echo htmlspecialchars(
-                                        $book['title']
-                                    );
-                                ?>"
-                            >
+                        <img
+                            src="<?php
+                                echo htmlspecialchars(
+                                    $book['cover']
+                                );
+                            ?>"
+                            alt="<?php
+                                echo htmlspecialchars(
+                                    $book['title']
+                                );
+                            ?>"
+                        >
 
-                        <?php else: ?>
+                    <?php else: ?>
 
                             <div class="buy-book-placeholder">
 

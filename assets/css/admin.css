@@ -6844,3 +6844,465 @@ body.dark-mode .add-book-file:hover {
     border-radius: 12px;
     border: 1px solid var(--border-color, #ddd);
 }
+
+/* =========================================================
+   EDIT BOOK PAGE
+========================================================= */
+
+.edit-book-panel {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.edit-book-panel .admin-panel-header {
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.admin-form {
+    width: 100%;
+}
+
+.admin-form-group {
+    margin-bottom: 24px;
+}
+
+.admin-form-group label {
+    display: block;
+    margin-bottom: 8px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: #222;
+}
+
+.admin-form-group input[type="text"],
+.admin-form-group input[type="number"],
+.admin-form-group input[type="date"],
+.admin-form-group input[type="file"],
+.admin-form-group select,
+.admin-form-group textarea {
+    display: block;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 13px 15px;
+
+    border: 1px solid #ddd;
+    border-radius: 9px;
+
+    background: #fff;
+
+    color: #222;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* TEXT INPUTS */
+
+.admin-form-group input[type="text"]:focus,
+.admin-form-group input[type="number"]:focus,
+.admin-form-group input[type="date"]:focus,
+.admin-form-group select:focus,
+.admin-form-group textarea:focus {
+    border-color: #9b1c1c;
+
+    box-shadow:
+        0 0 0 3px rgba(155, 28, 28, 0.10);
+}
+
+
+/* TEXTAREA */
+
+.admin-form-group textarea {
+    min-height: 160px;
+    resize: vertical;
+
+    line-height: 1.6;
+}
+
+
+/* SELECT */
+
+.admin-form-group select {
+    cursor: pointer;
+}
+
+
+/* FILE INPUT */
+
+.admin-form-group input[type="file"] {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.admin-form-group input[type="file"]::file-selector-button {
+    border: none;
+
+    padding: 9px 14px;
+    margin-right: 12px;
+
+    border-radius: 7px;
+
+    background: #f1f1f1;
+    color: #333;
+
+    font-family: inherit;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.admin-form-group input[type="file"]::file-selector-button:hover {
+    background: #e5e5e5;
+}
+
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.price-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.price-input-wrapper input {
+    padding-right: 55px;
+}
+
+.price-input-wrapper span {
+    position: absolute;
+
+    right: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 15px;
+    font-weight: 700;
+
+    color: #777;
+
+    pointer-events: none;
+}
+
+.form-help {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: #888;
+}
+
+
+/* =========================================================
+   CURRENT COVER
+========================================================= */
+
+.edit-book-current-cover {
+    display: inline-flex;
+
+    padding: 10px;
+
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+
+    background: #fafafa;
+}
+
+.edit-book-current-cover img {
+    display: block;
+
+    width: 170px;
+    height: 240px;
+
+    object-fit: cover;
+
+    border-radius: 7px;
+}
+
+
+/* NO COVER */
+
+.edit-book-no-cover {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: fit-content;
+
+    padding: 18px 20px;
+
+    border: 1px dashed #ccc;
+    border-radius: 10px;
+
+    background: #fafafa;
+
+    color: #888;
+}
+
+.edit-book-no-cover i {
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   CHECKBOX
+========================================================= */
+
+.checkbox-label {
+    display: flex !important;
+    align-items: center;
+
+    gap: 10px;
+
+    width: fit-content;
+
+    margin: 0 !important;
+
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+
+    margin: 0;
+
+    accent-color: #9b1c1c;
+
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #333;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.edit-book-actions {
+    display: flex;
+
+    justify-content: flex-end;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 32px;
+    padding-top: 25px;
+
+    border-top: 1px solid #eee;
+}
+
+
+/* SECONDARY */
+
+.admin-secondary-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #555;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.admin-secondary-button:hover {
+    background: #f5f5f5;
+
+    border-color: #ccc;
+
+    color: #222;
+}
+
+
+/* PRIMARY */
+
+.admin-primary-button {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    min-height: 44px;
+
+    padding: 0 20px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #9b1c1c;
+
+    color: #fff;
+
+    text-decoration: none;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.admin-primary-button:hover {
+    background: #7f1515;
+
+    color: #fff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 6px 18px rgba(155, 28, 28, 0.20);
+}
+
+
+/* =========================================================
+   ALERTS
+========================================================= */
+
+.admin-alert {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    margin-bottom: 22px;
+    padding: 14px 17px;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.admin-alert.success {
+    background: #edf8f0;
+
+    border: 1px solid #c9e8d0;
+
+    color: #28733a;
+}
+
+.admin-alert.error {
+    background: #fff0f0;
+
+    border: 1px solid #f0caca;
+
+    color: #a52222;
+}
+
+.admin-alert i {
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .edit-book-panel {
+        max-width: 100%;
+    }
+
+    .admin-form-group {
+        margin-bottom: 20px;
+    }
+
+    .edit-book-current-cover img {
+        width: 140px;
+        height: 200px;
+    }
+
+    .edit-book-actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+
+    .edit-book-actions a,
+    .edit-book-actions button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .edit-book-current-cover img {
+        width: 120px;
+        height: 175px;
+    }
+
+    .admin-form-group label {
+        font-size: 13px;
+    }
+
+    .admin-form-group input,
+    .admin-form-group select,
+    .admin-form-group textarea {
+        font-size: 13px;
+    }
+
+}

@@ -4,9 +4,9 @@ require_once '../includes/auth.php';
 require_once '../includes/database.php';
 
 
-// ==========================================
+// ======================================================
 // GET BOOK ID
-// ==========================================
+// ======================================================
 
 $book_id = isset($_GET['id'])
     ? (int)$_GET['id']
@@ -21,15 +21,16 @@ if ($book_id <= 0) {
 }
 
 
-// ==========================================
+// ======================================================
 // GET BOOK
-// ==========================================
+// ======================================================
 
 $stmt = mysqli_prepare(
     $conn,
     "SELECT
         id,
         title,
+        price,
         author_id,
         category_id,
         cover,
@@ -64,104 +65,93 @@ if (!$book) {
 }
 
 
-// ==========================================
+// ======================================================
 // GET AUTHORS
-// ==========================================
+// ======================================================
 
-$authors = [];
-
-$authors_query = mysqli_query(
+$authors_result = mysqli_query(
     $conn,
     "SELECT id, fullname
      FROM authors
      ORDER BY fullname ASC"
 );
 
-if ($authors_query) {
 
-    while ($author = mysqli_fetch_assoc($authors_query)) {
-
-        $authors[] = $author;
-
-    }
-
-}
-
-
-// ==========================================
+// ======================================================
 // GET CATEGORIES
-// ==========================================
+// ======================================================
 
-$categories = [];
-
-$categories_query = mysqli_query(
+$categories_result = mysqli_query(
     $conn,
     "SELECT id, name
      FROM categories
      ORDER BY name ASC"
 );
 
-if ($categories_query) {
 
-    while (
-        $category =
-        mysqli_fetch_assoc($categories_query)
-    ) {
-
-        $categories[] = $category;
-
-    }
-
-}
-
-
-// ==========================================
+// ======================================================
 // VARIABLES
-// ==========================================
+// ======================================================
 
+$success = '';
 $error = '';
 
 
-// ==========================================
+// ======================================================
 // UPDATE BOOK
-// ==========================================
+// ======================================================
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
-    $title =
-        trim($_POST['title'] ?? '');
+    $title = trim(
+        $_POST['title'] ?? ''
+    );
 
-    $author_id =
-        (int)($_POST['author_id'] ?? 0);
-
-    $category_id =
-        (int)($_POST['category_id'] ?? 0);
-
-    $description =
-        trim($_POST['description'] ?? '');
-
-    $publish_date =
-        trim($_POST['publish_date'] ?? '');
 
     $price = isset($_POST['price'])
-    ? (float)$_POST['price']
-    : 0;
+        ? (float)$_POST['price']
+        : 0;
 
-    $featured =
-        isset($_POST['featured'])
+
+    $author_id = isset($_POST['author_id'])
+        ? (int)$_POST['author_id']
+        : 0;
+
+
+    $category_id = isset($_POST['category_id'])
+        ? (int)$_POST['category_id']
+        : 0;
+
+
+    $description = trim(
+        $_POST['description'] ?? ''
+    );
+
+
+    $publish_date = trim(
+        $_POST['publish_date'] ?? ''
+    );
+
+
+    $featured = isset($_POST['featured'])
         ? 1
         : 0;
 
 
-    // ======================================
+    // ==================================================
     // VALIDATION
-    // ======================================
+    // ==================================================
 
     if ($title === '') {
 
         $error =
-            "Ju lutem shkruani titullin e librit.";
+            "Ju lutem vendosni titullin e librit.";
+
+    } elseif ($price <= 0) {
+
+        $error =
+            "Ju lutem vendosni një çmim më të madh se 0€.";
 
     } elseif ($author_id <= 0) {
 
@@ -173,178 +163,170 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error =
             "Ju lutem zgjidhni kategorinë.";
 
-    }
-    } elseif ($price <= 0) {
-
-        $error =
-            "Ju lutem zgjidhni cmimin.";
-
-    }
+    } else {
 
 
-    // ======================================
-    // CURRENT COVER
-    // ======================================
+        // ==============================================
+        // CURRENT COVER
+        // ==============================================
 
-    $cover_path =
-        $book['cover'];
+        $cover_path = $book['cover'];
 
 
-    // ======================================
-    // NEW COVER
-    // ======================================
-
-    if (
-        $error === '' &&
-        isset($_FILES['cover']) &&
-        $_FILES['cover']['error'] !== UPLOAD_ERR_NO_FILE
-    ) {
-
+        // ==============================================
+        // UPLOAD NEW COVER
+        // ==============================================
 
         if (
-            $_FILES['cover']['error']
-            !== UPLOAD_ERR_OK
+            isset($_FILES['cover']) &&
+            $_FILES['cover']['error'] !== UPLOAD_ERR_NO_FILE
         ) {
-
-            $error =
-                "Ndodhi një problem gjatë upload-it të cover-it.";
-
-        } else {
-
-
-            $allowed_types = [
-
-                'image/jpeg',
-                'image/png',
-                'image/webp'
-
-            ];
-
-
-            $file_type =
-                mime_content_type(
-                    $_FILES['cover']['tmp_name']
-                );
 
 
             if (
-                !in_array(
-                    $file_type,
-                    $allowed_types,
-                    true
-                )
+                $_FILES['cover']['error'] !==
+                UPLOAD_ERR_OK
             ) {
 
                 $error =
-                    "Cover-i duhet të jetë JPG, PNG ose WEBP.";
-
-            } elseif (
-                $_FILES['cover']['size']
-                > 5 * 1024 * 1024
-            ) {
-
-                $error =
-                    "Cover-i nuk duhet të jetë më i madh se 5MB.";
+                    "Gabim gjatë ngarkimit të fotos.";
 
             } else {
 
 
-                $upload_directory =
-                    '../assets/images/books/';
+                $allowed_types = [
+                    'image/jpeg',
+                    'image/png',
+                    'image/webp',
+                    'image/jpg'
+                ];
+
+
+                $file_type =
+                    mime_content_type(
+                        $_FILES['cover']['tmp_name']
+                    );
 
 
                 if (
-                    !is_dir(
-                        $upload_directory
-                    )
-                ) {
-
-                    mkdir(
-                        $upload_directory,
-                        0755,
+                    !in_array(
+                        $file_type,
+                        $allowed_types,
                         true
-                    );
-
-                }
-
-
-                $extension =
-                    strtolower(
-                        pathinfo(
-                            $_FILES['cover']['name'],
-                            PATHINFO_EXTENSION
-                        )
-                    );
-
-
-                $filename =
-                    'book_' .
-                    time() .
-                    '_' .
-                    bin2hex(
-                        random_bytes(4)
-                    ) .
-                    '.' .
-                    $extension;
-
-
-                $target =
-                    $upload_directory .
-                    $filename;
-
-
-                if (
-                    move_uploaded_file(
-                        $_FILES['cover']['tmp_name'],
-                        $target
                     )
                 ) {
 
-                    $new_cover_path =
-                        'assets/images/books/' .
-                        $filename;
+                    $error =
+                        "Lejohen vetëm JPG, PNG dhe WEBP.";
+
+                } else {
 
 
-                    // Fshi cover-in e vjetër
-                    // vetëm nëse ekziston
-                    // dhe është në folderin e librave
+                    // ==================================
+                    // UPLOAD DIRECTORY
+                    // ==================================
+
+                    $upload_dir =
+                        '../assets/uploads/';
+
 
                     if (
-                        !empty($book['cover'])
+                        !is_dir($upload_dir)
                     ) {
 
-                        $old_cover =
-                            '../' .
-                            $book['cover'];
-
-
-                        if (
-                            file_exists(
-                                $old_cover
-                            )
-                            &&
-                            strpos(
-                                $book['cover'],
-                                'assets/images/books/'
-                            ) === 0
-                        ) {
-
-                            unlink(
-                                $old_cover
-                            );
-
-                        }
+                        mkdir(
+                            $upload_dir,
+                            0755,
+                            true
+                        );
 
                     }
 
 
-                    $cover_path =
-                        $new_cover_path;
+                    // ==================================
+                    // FILE EXTENSION
+                    // ==================================
 
-                } else {
+                    $extension =
+                        strtolower(
+                            pathinfo(
+                                $_FILES['cover']['name'],
+                                PATHINFO_EXTENSION
+                            )
+                        );
 
-                    $error =
-                        "Cover-i i ri nuk mund të ruhej.";
+
+                    // ==================================
+                    // UNIQUE NAME
+                    // ==================================
+
+                    $new_filename =
+                        'book_' .
+                        time() .
+                        '_' .
+                        uniqid() .
+                        '.' .
+                        $extension;
+
+
+                    $new_file_path =
+                        $upload_dir .
+                        $new_filename;
+
+
+                    // ==================================
+                    // MOVE FILE
+                    // ==================================
+
+                    if (
+                        move_uploaded_file(
+                            $_FILES['cover']['tmp_name'],
+                            $new_file_path
+                        )
+                    ) {
+
+
+                        // Fshij cover-in e vjetër
+                        // nëse ekziston
+
+                        if (
+                            !empty($book['cover'])
+                        ) {
+
+                            $old_cover =
+                                '../' .
+                                ltrim(
+                                    $book['cover'],
+                                    '/'
+                                );
+
+
+                            if (
+                                file_exists(
+                                    $old_cover
+                                )
+                            ) {
+
+                                @unlink(
+                                    $old_cover
+                                );
+
+                            }
+
+                        }
+
+
+                        $cover_path =
+                            'assets/uploads/' .
+                            $new_filename;
+
+
+                    } else {
+
+                        $error =
+                            "Fotoja nuk mund të ruhej.";
+
+                    }
 
                 }
 
@@ -352,119 +334,103 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         }
 
-    }
+
+        // ==============================================
+        // UPDATE DATABASE
+        // ==============================================
+
+        if ($error === '') {
 
 
-    // ======================================
-    // UPDATE DATABASE
-    // ======================================
-
-    if ($error === '') {
-
-
-        if ($publish_date === '') {
-
-            $publish_date = null;
-
-        }
-
-
-        $update = mysqli_prepare(
-            $conn,
-            "UPDATE books
-             SET
-                title = ?,
-                author_id = ?,
-                category_id = ?,
-                cover = ?,
-                description = ?,
-                publish_date = ?,
-                price = ?,
-                featured = ?
-             WHERE id = ?"
-        );
+            $update = mysqli_prepare(
+                $conn,
+                "UPDATE books
+                 SET
+                    title = ?,
+                    price = ?,
+                    author_id = ?,
+                    category_id = ?,
+                    cover = ?,
+                    description = ?,
+                    publish_date = ?,
+                    featured = ?
+                 WHERE id = ?"
+            );
 
 
-        mysqli_stmt_bind_param(
-            $update,
-            "siisssii",
-            $title,
-            $author_id,
-            $category_id,
-            $cover_path,
-            $description,
-            $publish_date,
-            $price,
-            $featured,
-            $book_id
-        );
+            mysqli_stmt_bind_param(
+                $update,
+                "sdiisssii",
+                $title,
+                $price,
+                $author_id,
+                $category_id,
+                $cover_path,
+                $description,
+                $publish_date,
+                $featured,
+                $book_id
+            );
 
 
-        if (
-            mysqli_stmt_execute(
-                $update
-            )
-        ) {
+            if (
+                mysqli_stmt_execute($update)
+            ) {
+
+
+                $success =
+                    "Libri u përditësua me sukses.";
+
+
+                // Përditëso të dhënat
+                // që shfaqen në formë
+
+                $book['title'] =
+                    $title;
+
+                $book['price'] =
+                    $price;
+
+                $book['author_id'] =
+                    $author_id;
+
+                $book['category_id'] =
+                    $category_id;
+
+                $book['cover'] =
+                    $cover_path;
+
+                $book['description'] =
+                    $description;
+
+                $book['publish_date'] =
+                    $publish_date;
+
+                $book['featured'] =
+                    $featured;
+
+
+            } else {
+
+                $error =
+                    "Ndodhi një gabim gjatë përditësimit: " .
+                    mysqli_error($conn);
+
+            }
+
 
             mysqli_stmt_close($update);
 
-
-            header(
-                "Location: books.php?updated=1"
-            );
-
-            exit;
-
-        } else {
-
-            $error =
-                "Libri nuk mund të përditësohej: " .
-                mysqli_error($conn);
-
         }
 
-
-        mysqli_stmt_close($update);
-
     }
-
-
-    // Nëse ka error,
-    // mbaj vlerat e reja në formular
-
-    $book['title'] =
-        $title;
-
-    $book['author_id'] =
-        $author_id;
-
-    $book['category_id'] =
-        $category_id;
-
-    $book['cover'] =
-        $cover_path;
-
-    $book['description'] =
-        $description;
-
-    $book['publish_date'] =
-        $publish_date;
-    
-    $book['price'] =
-        $price;
-
-    $book['featured'] =
-        $featured;
 
 }
 
 ?>
 
-
 <!DOCTYPE html>
-
 <html lang="sq">
-
 
 <head>
 
@@ -476,7 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     >
 
     <title>
-        Ndrysho librin | Jakup Ceraja
+        Ndrysho Librin | Jakup Ceraja Admin
     </title>
 
 
@@ -504,9 +470,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="admin-layout">
 
 
-    <!-- ======================================
+    <!-- ==================================================
          SIDEBAR
-    ======================================= -->
+    =================================================== -->
 
     <aside class="admin-sidebar">
 
@@ -645,7 +611,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="admin-sidebar-bottom">
 
-
             <a
                 href="../index.php"
                 target="_blank"
@@ -666,7 +631,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             </a>
 
-
         </div>
 
 
@@ -674,9 +638,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-    <!-- ======================================
+    <!-- ==================================================
          MAIN
-    ======================================= -->
+    =================================================== -->
 
     <main class="admin-main">
 
@@ -700,29 +664,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="admin-topbar-title">
 
                 <span>
-                    MENAXHIMI I LIBRAVE
+                    ADMIN PANEL
                 </span>
 
                 <h1>
-                    Ndrysho librin
+                    Ndrysho Librin
                 </h1>
 
             </div>
 
 
             <div class="admin-topbar-actions">
-
-
-                <button
-                    type="button"
-                    class="admin-icon-btn"
-                    id="darkModeToggle"
-                    title="Dark mode"
-                >
-
-                    <i class="fa-solid fa-moon"></i>
-
-                </button>
 
 
                 <a
@@ -732,10 +684,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <i class="fa-solid fa-arrow-left"></i>
 
-                    Kthehu te librat
+                    Kthehu te Librat
 
                 </a>
-
 
             </div>
 
@@ -744,22 +695,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-        <!-- CONTENT -->
+        <!-- ==================================================
+             CONTENT
+        =================================================== -->
 
         <div class="admin-content">
 
 
-            <!-- WELCOME -->
-
             <div class="admin-welcome">
-
 
                 <div>
 
                     <span>
-                        LIBËR #<?php
-                        echo (int)$book['id'];
-                        ?>
+                        MENAXHIMI I LIBRAVE
                     </span>
 
                     <h2>
@@ -767,7 +715,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </h2>
 
                     <p>
-                        Përditëso të dhënat e këtij libri.
+                        Përditëso të dhënat,
+                        çmimin dhe kopertinën e librit.
                     </p>
 
                 </div>
@@ -775,32 +724,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <div class="admin-welcome-icon">
 
-                    <i class="fa-solid fa-pen"></i>
+                    <i class="fa-solid fa-pen-to-square"></i>
 
                 </div>
-
 
             </div>
 
 
 
-            <!-- ERROR -->
+            <!-- ==================================================
+                 MESSAGES
+            =================================================== -->
+
+            <?php if ($success !== ''): ?>
+
+                <div class="admin-alert success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    <?php
+                    echo htmlspecialchars(
+                        $success
+                    );
+                    ?>
+
+                </div>
+
+            <?php endif; ?>
+
 
             <?php if ($error !== ''): ?>
 
-                <div class="add-book-alert error">
+                <div class="admin-alert error">
 
                     <i class="fa-solid fa-circle-exclamation"></i>
 
-                    <span>
-
-                        <?php
-                        echo htmlspecialchars(
-                            $error
-                        );
-                        ?>
-
-                    </span>
+                    <?php
+                    echo htmlspecialchars(
+                        $error
+                    );
+                    ?>
 
                 </div>
 
@@ -808,20 +771,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-            <!-- FORM -->
+            <!-- ==================================================
+                 FORM
+            =================================================== -->
 
-            <section
-                class="admin-panel-card add-book-card"
-            >
+            <section class="admin-panel-card edit-book-panel">
 
 
                 <div class="admin-panel-header">
 
-
                     <div>
 
                         <span>
-                            INFORMACIONI
+                            LIBRI #<?php
+                            echo (int)$book['id'];
+                            ?>
                         </span>
 
                         <h3>
@@ -830,14 +794,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
-
-                    <div class="add-book-header-icon">
-
-                        <i class="fa-solid fa-book"></i>
-
-                    </div>
-
-
                 </div>
 
 
@@ -845,335 +801,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <form
                     method="POST"
                     enctype="multipart/form-data"
-                    class="add-book-form"
+                    class="admin-form"
                 >
 
 
                     <!-- TITLE -->
 
-                    <div class="add-book-field full-width">
-
+                    <div class="admin-form-group">
 
                         <label for="title">
                             Titulli i librit
                         </label>
 
-
-                        <div class="add-book-input">
-
-
-                            <i class="fa-solid fa-heading"></i>
-
-
-                            <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                value="<?php
-                                    echo htmlspecialchars(
-                                        $book['title']
-                                    );
-                                ?>"
-                                required
-                            >
-
-
-                        </div>
-
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            value="<?php
+                                echo htmlspecialchars(
+                                    $book['title']
+                                );
+                            ?>"
+                            required
+                        >
 
                     </div>
 
 
 
-                    <!-- AUTHOR -->
+                    <!-- PRICE -->
 
-                    <div class="add-book-field">
-
-
-                        <label for="author_id">
-                            Autori
-                        </label>
-
-
-                        <div class="add-book-input">
-
-
-                            <i class="fa-solid fa-pen-nib"></i>
-
-
-                            <select
-                                id="author_id"
-                                name="author_id"
-                                required
-                            >
-
-
-                                <option value="">
-                                    Zgjidh autorin
-                                </option>
-
-
-                                <?php foreach (
-                                    $authors
-                                    as $author
-                                ): ?>
-
-
-                                    <option
-                                        value="<?php
-                                            echo (int)$author['id'];
-                                        ?>"
-                                        <?php
-                                        echo (
-                                            (int)$book['author_id']
-                                            ===
-                                            (int)$author['id']
-                                        )
-                                        ? 'selected'
-                                        : '';
-                                        ?>
-                                    >
-
-                                        <?php
-                                        echo htmlspecialchars(
-                                            $author['fullname']
-                                        );
-                                        ?>
-
-                                    </option>
-
-
-                                <?php endforeach; ?>
-
-
-                            </select>
-
-
-                        </div>
-
-
-                    </div>
-
-
-
-                    <!-- CATEGORY -->
-
-                    <div class="add-book-field">
-
-
-                        <label for="category_id">
-                            Kategoria
-                        </label>
-
-
-                        <div class="add-book-input">
-
-
-                            <i class="fa-solid fa-layer-group"></i>
-
-
-                            <select
-                                id="category_id"
-                                name="category_id"
-                                required
-                            >
-
-
-                                <option value="">
-                                    Zgjidh kategorinë
-                                </option>
-
-
-                                <?php foreach (
-                                    $categories
-                                    as $category
-                                ): ?>
-
-
-                                    <option
-                                        value="<?php
-                                            echo (int)$category['id'];
-                                        ?>"
-                                        <?php
-                                        echo (
-                                            (int)$book['category_id']
-                                            ===
-                                            (int)$category['id']
-                                        )
-                                        ? 'selected'
-                                        : '';
-                                        ?>
-                                    >
-
-                                        <?php
-                                        echo htmlspecialchars(
-                                            $category['name']
-                                        );
-                                        ?>
-
-                                    </option>
-
-
-                                <?php endforeach; ?>
-
-
-                            </select>
-
-
-                        </div>
-
-
-                    </div>
-
-
-
-                    <!-- DATE -->
-
-                    <div class="add-book-field">
-
-
-                        <label for="publish_date">
-                            Data e publikimit
-                        </label>
-
-
-                        <div class="add-book-input">
-
-
-                            <i class="fa-solid fa-calendar"></i>
-
-
-                            <input
-                                type="date"
-                                id="publish_date"
-                                name="publish_date"
-                                value="<?php
-                                    echo htmlspecialchars(
-                                        $book['publish_date']
-                                        ?? ''
-                                    );
-                                ?>"
-                            >
-
-
-                        </div>
-
-
-                    </div>
-
-
-
-                    <!-- COVER -->
-
-                    <div class="add-book-field">
-
-
-                        <label>
-                            Cover-i
-                        </label>
-
-
-                        <?php if (
-                            !empty($book['cover'])
-                        ): ?>
-
-
-                            <div class="edit-book-current-cover">
-
-
-                                <img
-                                    src="../<?php
-                                        echo htmlspecialchars(
-                                            $book['cover']
-                                        );
-                                    ?>"
-                                    alt="Cover aktual"
-                                >
-
-
-                                <div>
-
-                                    <strong>
-                                        Cover-i aktual
-                                    </strong>
-
-                                    <small>
-                                        Zgjidh një foto të re
-                                        vetëm nëse dëshiron
-                                        ta ndryshosh.
-                                    </small>
-
-                                </div>
-
-
-                            </div>
-
-
-                        <?php endif; ?>
-
-
-                        <div class="add-book-file">
-
-
-                            <input
-                                type="file"
-                                id="cover"
-                                name="cover"
-                                accept=".jpg,.jpeg,.png,.webp"
-                            >
-
-
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-
-
-                            <span>
-                                Ndrysho cover-in
-                            </span>
-
-
-                            <small>
-                                JPG, PNG ose WEBP — max 5MB
-                            </small>
-
-
-                        </div>
-
-
-                    </div>
-
-
-
-                    <!-- DESCRIPTION -->
-
-                    <div class="add-book-field full-width">
-
-
-                        <label for="description">
-                            Përshkrimi
-                        </label>
-
-
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="7"
-                            placeholder="Shkruaj përshkrimin e librit..."
-                        ><?php
-                            echo htmlspecialchars(
-                                $book['description']
-                                ?? ''
-                            );
-                        ?></textarea>
-
-
-                    </div>
-
-                    <!-- BOOK PRICE -->
-                     <div class="admin-form-group">
+                    <div class="admin-form-group">
 
                         <label for="price">
                             Çmimi i librit (€)
                         </label>
+
 
                         <div class="price-input-wrapper">
 
@@ -1183,23 +846,298 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 name="price"
                                 min="0"
                                 step="0.01"
-                                value="<?php echo htmlspecialchars($book['price']); ?>"
+                                value="<?php
+                                    echo htmlspecialchars(
+                                        $book['price'] ?? '0.00'
+                                    );
+                                ?>"
                                 required
                             >
 
-                            <span>€</span>
+                            <span>
+                                €
+                            </span>
 
                         </div>
 
+
+                        <small class="form-help">
+                            Vendos çmimin e librit në euro.
+                        </small>
+
                     </div>
+
+
+
+                    <!-- AUTHOR -->
+
+                    <div class="admin-form-group">
+
+                        <label for="author_id">
+                            Autori
+                        </label>
+
+                        <select
+                            id="author_id"
+                            name="author_id"
+                            required
+                        >
+
+                            <option value="">
+                                Zgjidh autorin
+                            </option>
+
+
+                            <?php
+
+                            if (
+                                $authors_result &&
+                                mysqli_num_rows(
+                                    $authors_result
+                                ) > 0
+                            ):
+
+                                while (
+                                    $author =
+                                    mysqli_fetch_assoc(
+                                        $authors_result
+                                    )
+                                ):
+
+                            ?>
+
+                                <option
+                                    value="<?php
+                                        echo (int)$author['id'];
+                                    ?>"
+                                    <?php
+                                    echo (
+                                        (int)$book['author_id'] ===
+                                        (int)$author['id']
+                                    )
+                                    ? 'selected'
+                                    : '';
+                                    ?>
+                                >
+
+                                    <?php
+                                    echo htmlspecialchars(
+                                        $author['fullname']
+                                    );
+                                    ?>
+
+                                </option>
+
+                            <?php
+
+                                endwhile;
+
+                            endif;
+
+                            ?>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- CATEGORY -->
+
+                    <div class="admin-form-group">
+
+                        <label for="category_id">
+                            Kategoria
+                        </label>
+
+                        <select
+                            id="category_id"
+                            name="category_id"
+                            required
+                        >
+
+                            <option value="">
+                                Zgjidh kategorinë
+                            </option>
+
+
+                            <?php
+
+                            if (
+                                $categories_result &&
+                                mysqli_num_rows(
+                                    $categories_result
+                                ) > 0
+                            ):
+
+                                while (
+                                    $category =
+                                    mysqli_fetch_assoc(
+                                        $categories_result
+                                    )
+                                ):
+
+                            ?>
+
+                                <option
+                                    value="<?php
+                                        echo (int)$category['id'];
+                                    ?>"
+                                    <?php
+                                    echo (
+                                        (int)$book['category_id'] ===
+                                        (int)$category['id']
+                                    )
+                                    ? 'selected'
+                                    : '';
+                                    ?>
+                                >
+
+                                    <?php
+                                    echo htmlspecialchars(
+                                        $category['name']
+                                    );
+                                    ?>
+
+                                </option>
+
+                            <?php
+
+                                endwhile;
+
+                            endif;
+
+                            ?>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <!-- PUBLISH DATE -->
+
+                    <div class="admin-form-group">
+
+                        <label for="publish_date">
+                            Data e publikimit
+                        </label>
+
+                        <input
+                            type="date"
+                            id="publish_date"
+                            name="publish_date"
+                            value="<?php
+                                echo htmlspecialchars(
+                                    $book['publish_date'] ?? ''
+                                );
+                            ?>"
+                        >
+
+                    </div>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="admin-form-group">
+
+                        <label for="description">
+                            Përshkrimi
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="7"
+                            placeholder="Shkruani përshkrimin e librit..."
+                        ><?php
+                            echo htmlspecialchars(
+                                $book['description'] ?? ''
+                            );
+                        ?></textarea>
+
+                    </div>
+
+
+
+                    <!-- CURRENT COVER -->
+
+                    <div class="admin-form-group">
+
+                        <label>
+                            Kopertina aktuale
+                        </label>
+
+
+                        <?php if (!empty($book['cover'])): ?>
+
+                            <div class="edit-book-current-cover">
+
+                                <img
+                                    src="../<?php
+                                        echo htmlspecialchars(
+                                            $book['cover']
+                                        );
+                                    ?>"
+                                    alt="<?php
+                                        echo htmlspecialchars(
+                                            $book['title']
+                                        );
+                                    ?>"
+                                >
+
+                            </div>
+
+                        <?php else: ?>
+
+                            <div class="edit-book-no-cover">
+
+                                <i class="fa-solid fa-image"></i>
+
+                                <span>
+                                    Nuk ka kopertinë.
+                                </span>
+
+                            </div>
+
+                        <?php endif; ?>
+
+                    </div>
+
+
+
+                    <!-- NEW COVER -->
+
+                    <div class="admin-form-group">
+
+                        <label for="cover">
+                            Ndrysho kopertinën
+                        </label>
+
+                        <input
+                            type="file"
+                            id="cover"
+                            name="cover"
+                            accept=".jpg,.jpeg,.png,.webp"
+                        >
+
+                        <small class="form-help">
+
+                            Lëre bosh nëse dëshiron
+                            ta mbash kopertinën aktuale.
+
+                        </small>
+
+                    </div>
+
+
 
                     <!-- FEATURED -->
 
-                    <div class="add-book-featured">
+                    <div class="admin-form-group">
 
-
-                        <label class="featured-checkbox">
-
+                        <label class="checkbox-label">
 
                             <input
                                 type="checkbox"
@@ -1207,54 +1145,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 value="1"
                                 <?php
                                 echo (
-                                    (int)$book['featured']
-                                    === 1
+                                    (int)$book['featured'] === 1
                                 )
                                 ? 'checked'
                                 : '';
                                 ?>
                             >
 
-
-                            <span class="featured-checkmark">
-
-                                <i class="fa-solid fa-check"></i>
-
+                            <span>
+                                Shfaqe si libër të veçuar
                             </span>
-
-
-                            <span class="featured-text">
-
-
-                                <strong>
-                                    Libër i veçuar
-                                </strong>
-
-
-                                <small>
-                                    Shfaqe librin si të veçuar
-                                    në website.
-                                </small>
-
-
-                            </span>
-
 
                         </label>
-
 
                     </div>
 
 
 
-                    <!-- ACTIONS -->
+                    <!-- BUTTONS -->
 
-                    <div class="add-book-actions">
+                    <div class="edit-book-actions">
 
 
                         <a
                             href="books.php"
-                            class="add-book-cancel"
+                            class="admin-secondary-button"
                         >
 
                             <i class="fa-solid fa-xmark"></i>

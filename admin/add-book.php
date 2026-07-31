@@ -58,14 +58,22 @@ if ($categories_query) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $title = trim($_POST['title'] ?? '');
+
     $author_id = (int)($_POST['author_id'] ?? 0);
+
     $category_id = (int)($_POST['category_id'] ?? 0);
+
     $description = trim($_POST['description'] ?? '');
+
     $publish_date = trim($_POST['publish_date'] ?? '');
+
     $price = isset($_POST['price'])
-    ? (float)$_POST['price']
-    : 0;
-    $featured = isset($_POST['featured']) ? 1 : 0;
+        ? (float)$_POST['price']
+        : 0;
+
+    $featured = isset($_POST['featured'])
+        ? 1
+        : 0;
 
 
     // ======================================
@@ -83,10 +91,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($category_id <= 0) {
 
         $error = "Ju lutem zgjidhni kategorinë.";
-    
+
     } elseif ($price <= 0) {
 
-        $error = "Ju lutem zgjidhni cmimin.";
+        $error = "Ju lutem vendosni çmimin e librit.";
 
     } else {
 
@@ -229,54 +237,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
 
+            /*
+             * DATABASE:
+             *
+             * id
+             * title
+             * price
+             * author_id
+             * category_id
+             * cover
+             * description
+             * publish_date
+             * featured
+             * created_at
+             */
+
+
             $stmt = mysqli_prepare(
                 $conn,
                 "INSERT INTO books
                 (
                     title,
+                    price,
                     author_id,
                     category_id,
                     cover,
                     description,
                     publish_date,
-                    price,
                     featured
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
             );
 
 
-            mysqli_stmt_bind_param(
-                $stmt,
-                "siisssi",
-                $title,
-                $author_id,
-                $category_id,
-                $cover_path,
-                $description,
-                $publish_date,
-                $price,
-                $featured
-            );
+            if (!$stmt) {
 
-
-            if (mysqli_stmt_execute($stmt)) {
-
-                mysqli_stmt_close($stmt);
-
-                header(
-                    "Location: books.php?added=1"
-                );
-
-                exit;
+                $error =
+                    "Gabim gjatë përgatitjes së query-t: " .
+                    mysqli_error($conn);
 
             } else {
 
-                $error =
-                    "Libri nuk mund të ruhej: " .
-                    mysqli_error($conn);
 
-                mysqli_stmt_close($stmt);
+                /*
+                 * s = string
+                 * d = decimal/double
+                 * i = integer
+                 *
+                 * title        = s
+                 * price        = d
+                 * author_id    = i
+                 * category_id  = i
+                 * cover        = s
+                 * description  = s
+                 * publish_date = s
+                 * featured     = i
+                 */
+
+                mysqli_stmt_bind_param(
+                    $stmt,
+                    "sdiisssi",
+                    $title,
+                    $price,
+                    $author_id,
+                    $category_id,
+                    $cover_path,
+                    $description,
+                    $publish_date,
+                    $featured
+                );
+
+
+                if (mysqli_stmt_execute($stmt)) {
+
+                    mysqli_stmt_close($stmt);
+
+                    header(
+                        "Location: books.php?added=1"
+                    );
+
+                    exit;
+
+                } else {
+
+                    $error =
+                        "Libri nuk mund të ruhej: " .
+                        mysqli_stmt_error($stmt);
+
+                    mysqli_stmt_close($stmt);
+
+                }
 
             }
 
@@ -566,7 +616,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-        <!-- CONTENT -->
+        <!-- ======================================
+             CONTENT
+        ======================================= -->
 
         <div class="admin-content">
 
@@ -919,9 +971,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
+
+
                     <!-- ==================================
-                         Book price
+                         BOOK PRICE
                     =================================== -->
+
                     <div class="admin-form-group">
 
                         <label for="price">
@@ -934,9 +989,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 type="number"
                                 id="price"
                                 name="price"
-                                min="0"
+                                min="0.01"
                                 step="0.01"
                                 placeholder="p.sh. 10.00"
+                                value="<?php
+                                    echo htmlspecialchars(
+                                        $_POST['price'] ?? ''
+                                    );
+                                ?>"
                                 required
                             >
 
@@ -944,7 +1004,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                         </div>
 
+                        <small class="form-help">
+                            Vendos çmimin e librit në euro.
+                        </small>
+
                     </div>
+
 
 
                     <!-- ==================================
