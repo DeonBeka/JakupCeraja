@@ -62,6 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category_id = (int)($_POST['category_id'] ?? 0);
     $description = trim($_POST['description'] ?? '');
     $publish_date = trim($_POST['publish_date'] ?? '');
+    $price = isset($_POST['price'])
+    ? (float)$_POST['price']
+    : 0;
     $featured = isset($_POST['featured']) ? 1 : 0;
 
 
@@ -80,6 +83,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($category_id <= 0) {
 
         $error = "Ju lutem zgjidhni kategorinë.";
+    
+    } elseif ($price <= 0) {
+
+        $error = "Ju lutem zgjidhni cmimin.";
 
     } else {
 
@@ -232,9 +239,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     cover,
                     description,
                     publish_date,
+                    price,
                     featured
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?)"
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
             );
 
 
@@ -247,6 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $cover_path,
                 $description,
                 $publish_date,
+                $price,
                 $featured
             );
 
@@ -910,6 +919,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
+                    <!-- ==================================
+                         Book price
+                    =================================== -->
+                    <div class="admin-form-group">
+
+                        <label for="price">
+                            Çmimi i librit (€)
+                        </label>
+
+                        <div class="price-input-wrapper">
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                min="0"
+                                step="0.01"
+                                placeholder="p.sh. 10.00"
+                                required
+                            >
+
+                            <span>€</span>
+
+                        </div>
+
+                    </div>
 
 
                     <!-- ==================================

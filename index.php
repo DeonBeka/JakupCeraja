@@ -1137,7 +1137,289 @@ include 'includes/navbar.php';
 
     </div>
 
+
 </div>
+<!-- ==========================================
+     NEWS SECTION
+========================================== -->
+
+<section class="home-news-section">
+
+    <div class="container">
+
+
+        <!-- SECTION HEADER -->
+
+        <div class="section-heading">
+
+            <span class="section-tag">
+                LAJMET E FUNDIT
+            </span>
+
+            <h2>
+                Nga Shtëpia Botuese
+            </h2>
+
+            <p>
+                Mësoni të rejat, aktivitetet dhe njoftimet
+                nga Shtëpia Botuese "Jakup Ceraja".
+            </p>
+
+        </div>
+
+
+        <?php
+
+        $news_query = "
+
+            SELECT
+                id,
+                title,
+                slug,
+                image,
+                excerpt,
+                category,
+                published_at,
+                featured
+
+            FROM news
+
+            ORDER BY published_at DESC, id DESC
+
+            LIMIT 4
+
+        ";
+
+
+        $news_result = mysqli_query(
+            $conn,
+            $news_query
+        );
+
+        ?>
+
+
+        <?php if (
+            $news_result &&
+            mysqli_num_rows($news_result) > 0
+        ): ?>
+
+
+            <div class="home-news-grid">
+
+
+                <?php while (
+                    $news = mysqli_fetch_assoc($news_result)
+                ): ?>
+
+
+                    <article class="home-news-card">
+
+
+                        <!-- IMAGE -->
+
+                        <?php if (!empty($news['image'])): ?>
+
+                            <div class="home-news-image">
+
+                                <img
+                                    src="assets/uploads/news/<?php
+                                        echo htmlspecialchars(
+                                            $news['image']
+                                        );
+                                    ?>"
+                                    alt="<?php
+                                        echo htmlspecialchars(
+                                            $news['title']
+                                        );
+                                    ?>"
+                                    loading="lazy"
+                                >
+
+                            </div>
+
+                        <?php endif; ?>
+
+
+                        <!-- CONTENT -->
+
+                        <div class="home-news-content">
+
+
+                            <!-- CATEGORY -->
+
+                            <?php if (
+                                !empty($news['category'])
+                            ): ?>
+
+                                <span class="home-news-category">
+
+                                    <?php
+                                    echo htmlspecialchars(
+                                        $news['category']
+                                    );
+                                    ?>
+
+                                </span>
+
+                            <?php endif; ?>
+
+
+                            <!-- DATE -->
+
+                            <?php if (
+                                !empty($news['published_at'])
+                            ): ?>
+
+                                <div class="home-news-date">
+
+                                    <i class="fa-regular fa-calendar"></i>
+
+                                    <?php
+
+                                    echo date(
+                                        'd.m.Y',
+                                        strtotime(
+                                            $news['published_at']
+                                        )
+                                    );
+
+                                    ?>
+
+                                </div>
+
+                            <?php endif; ?>
+
+
+                            <!-- TITLE -->
+
+                            <h3>
+
+                                <a
+                                    href="news-details.php?id=<?php
+                                        echo (int)$news['id'];
+                                    ?>"
+                                >
+
+                                    <?php
+                                    echo htmlspecialchars(
+                                        $news['title']
+                                    );
+                                    ?>
+
+                                </a>
+
+                            </h3>
+
+
+                            <!-- EXCERPT -->
+
+                            <?php if (
+                                !empty($news['excerpt'])
+                            ): ?>
+
+                                <p>
+
+                                    <?php
+
+                                    $excerpt =
+                                        $news['excerpt'];
+
+                                    echo htmlspecialchars(
+                                        mb_substr(
+                                            $excerpt,
+                                            0,
+                                            130
+                                        )
+                                    );
+
+                                    if (
+                                        mb_strlen(
+                                            $excerpt
+                                        ) > 130
+                                    ) {
+
+                                        echo '...';
+
+                                    }
+
+                                    ?>
+
+                                </p>
+
+                            <?php endif; ?>
+
+
+                            <!-- LINK -->
+
+                            <a
+                                href="news-details.php?id=<?php
+                                    echo (int)$news['id'];
+                                ?>"
+                                class="home-news-link"
+                            >
+
+                                Lexo lajmin
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </a>
+
+
+                        </div>
+
+
+                    </article>
+
+
+                <?php endwhile; ?>
+
+
+            </div>
+
+
+            <!-- ALL NEWS BUTTON -->
+
+            <div class="home-news-button">
+
+                <a
+                    href="news.php"
+                    class="btn btn-primary"
+                >
+
+                    Shiko të gjitha lajmet
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+            </div>
+
+
+        <?php else: ?>
+
+
+            <div class="home-news-empty">
+
+                <i class="fa-solid fa-newspaper"></i>
+
+                <h3>
+                    Lajmet do të shfaqen së shpejti
+                </h3>
+
+                <p>
+                    Aktualisht nuk ka lajme të publikuara.
+                </p>
+
+            </div>
+
+
+        <?php endif; ?>
+
+
+    </div>
+
+</section>
 </main>
 
 <?php

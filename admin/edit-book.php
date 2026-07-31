@@ -144,6 +144,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $publish_date =
         trim($_POST['publish_date'] ?? '');
 
+    $price = isset($_POST['price'])
+    ? (float)$_POST['price']
+    : 0;
+
     $featured =
         isset($_POST['featured'])
         ? 1
@@ -168,6 +172,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $error =
             "Ju lutem zgjidhni kategorinë.";
+
+    }
+    } elseif ($price <= 0) {
+
+        $error =
+            "Ju lutem zgjidhni cmimin.";
 
     }
 
@@ -369,6 +379,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 cover = ?,
                 description = ?,
                 publish_date = ?,
+                price = ?,
                 featured = ?
              WHERE id = ?"
         );
@@ -383,6 +394,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $cover_path,
             $description,
             $publish_date,
+            $price,
             $featured,
             $book_id
         );
@@ -437,6 +449,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $book['publish_date'] =
         $publish_date;
+    
+    $book['price'] =
+        $price;
 
     $book['featured'] =
         $featured;
@@ -1153,7 +1168,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     </div>
 
+                    <!-- BOOK PRICE -->
+                     <div class="admin-form-group">
 
+                        <label for="price">
+                            Çmimi i librit (€)
+                        </label>
+
+                        <div class="price-input-wrapper">
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                min="0"
+                                step="0.01"
+                                value="<?php echo htmlspecialchars($book['price']); ?>"
+                                required
+                            >
+
+                            <span>€</span>
+
+                        </div>
+
+                    </div>
 
                     <!-- FEATURED -->
 
