@@ -618,38 +618,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <!-- MAP HEADER -->
 
-            <div class="contact-map-header">
-
-                <span class="section-tag">
-
-                    NA GJENI
-
-                </span>
-
-
-                <h2>
-
-                    Vizitoni shtëpinë tonë botuese
-
-                </h2>
-
-            </div>
+           
 
 
 
             <!-- MAP -->
 
-            <div class="contact-map">
-
-                <iframe
-                    src="https://www.google.com/maps?q=Pristina,Kosovo&output=embed"
-                    loading="lazy"
-                    allowfullscreen
-                    referrerpolicy="no-referrer-when-downgrade"
-                    title="Lokacioni i Shtëpisë Botuese Jakup Ceraja"
-                ></iframe>
-
-            </div>
+            
 
 
         </div>
