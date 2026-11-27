@@ -36,13 +36,12 @@ export default async function AdminSettings() {
               <input type="text" name="instagram" placeholder="https://instagram.com/…" defaultValue={s.instagram ?? ""} />
             </label>
             <label className="a-field">
-              Çmimi i dërgesës (€)
+              Dërgesa për Shqipëri dhe Maqedoni (€)
               <input type="number" name="shippingPrice" min="0" step="0.01" defaultValue={Number(s.shippingPrice)} />
             </label>
-            <label className="a-field">
-              Dërgesë falas mbi (€)
-              <input type="number" name="freeShippingFrom" min="0" step="0.01" defaultValue={Number(s.freeShippingFrom)} />
-            </label>
+            <p className="a-field" style={{ fontSize: "0.85rem", color: "var(--mu)", fontWeight: 400 }}>
+              Kosova: dërgesa falas. Shtete tjera: klienti ju kontakton dhe ju e llogaritni çmimin.
+            </p>
           </div>
           <div className="a-actions">
             <span />

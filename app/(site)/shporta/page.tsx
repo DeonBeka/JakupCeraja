@@ -16,7 +16,7 @@ export default async function CartPage() {
       </section>
       <section className="section" style={{ paddingTop: 50 }}>
         <div className="container">
-          <CartView shippingPrice={Number(s.shippingPrice)} freeFrom={Number(s.freeShippingFrom)} />
+          <CartView regionalPrice={Number(s.shippingPrice)} phone={s.phone ?? ""} email={s.email ?? ""} />
         </div>
       </section>
     </>

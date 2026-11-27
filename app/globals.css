@@ -520,3 +520,15 @@ p { margin: 0; }
   .footer-grid { grid-template-columns: 1fr; gap: 30px; padding: 54px 0 34px; }
   .page-hero { padding: 50px 0 44px; }
 }
+
+/* shipping by country */
+.ship-rules { list-style: none; margin: 4px 0 6px; padding: 10px 12px; display: grid; gap: 6px; border-radius: 10px; background: var(--paper); font-size: 0.82rem; color: #5b6560; }
+.ship-rules li { display: flex; align-items: center; gap: 8px; }
+.ship-rules li svg { width: 14px; height: 14px; flex-shrink: 0; opacity: 0.6; }
+.ship-rules li.on { color: var(--green); font-weight: 600; }
+.ship-rules li.on svg { opacity: 1; }
+.contact-ship { margin: 20px 0 0; padding: 18px; border-radius: 12px; background: var(--wine-soft); }
+.contact-ship strong { display: flex; align-items: center; gap: 10px; color: var(--wine); }
+.contact-ship strong svg { width: 20px; height: 20px; flex-shrink: 0; }
+.contact-ship p { margin: 8px 0 14px; font-size: 0.92rem; color: #47514c; }
+.contact-ship-links { display: flex; flex-wrap: wrap; gap: 10px; }

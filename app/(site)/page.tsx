@@ -2,18 +2,19 @@ import Link from "next/link";
 import { ArrowRight, Award, BookOpen, Earth, Feather, Handshake, Heart, Newspaper, PenTool, Truck } from "lucide-react";
 import { BookCard } from "@/components/book-card";
 import { CategoryIcon } from "@/components/icons";
-import { getAuthors, getCategoriesWithCount, getFeaturedBooks, getGallery, getLatestBooks, getNews } from "@/lib/queries";
-import { dateAl, excerpt } from "@/lib/format";
+import { getAuthors, getCategoriesWithCount, getFeaturedBooks, getGallery, getLatestBooks, getNews, getSettings } from "@/lib/queries";
+import { dateAl, excerpt, money } from "@/lib/format";
 import { GalleryGrid } from "@/components/gallery-grid";
 
 export default async function HomePage() {
-  const [featured, latest, cats, authors, news, gallery] = await Promise.all([
+  const [featured, latest, cats, authors, news, gallery, settings] = await Promise.all([
     getFeaturedBooks(8),
     getLatestBooks(4),
     getCategoriesWithCount(),
     getAuthors(),
     getNews(3),
     getGallery(6),
+    getSettings(),
   ]);
   const shownBooks = featured.length ? featured : latest;
 
@@ -59,7 +60,7 @@ export default async function HomePage() {
               <Truck />
               <div>
                 <strong>Porosit online</strong>
-                <span>Pagesa në dorëzim</span>
+                <span>Dërgesë falas në Kosovë</span>
               </div>
             </div>
           </div>
@@ -260,7 +261,7 @@ export default async function HomePage() {
           <div className="cta">
             <div>
               <h2>Gjeni librin tuaj të radhës.</h2>
-              <p>Porositni online – ne jua dërgojmë kudo në Kosovë dhe rajon.</p>
+              <p>Porositni online – dërgesa në Kosovë është falas, për Shqipëri dhe Maqedoni vetëm {money(Number(settings.shippingPrice))}.</p>
             </div>
             <Link href="/librat" className="btn btn-light">
               <PenTool /> Shfleto katalogun

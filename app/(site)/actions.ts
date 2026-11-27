@@ -5,6 +5,7 @@ import { randomBytes } from "node:crypto";
 import { getDb } from "@/lib/db";
 import { books, messages, orderItems, orders } from "@/lib/schema";
 import { getSettings } from "@/lib/queries";
+import { shippingFor } from "@/lib/shipping";
 
 export type FormState = { ok?: boolean; error?: string; code?: string; total?: number; name?: string };
 
@@ -52,8 +53,9 @@ export async function placeOrder(_: FormState, fd: FormData): Promise<FormState>
   if (!lines.length) return { error: "Librat në shportë nuk janë më në dispozicion." };
 
   const s = await getSettings();
+  const shipping = shippingFor(country, Number(s.shippingPrice));
+  if (shipping === null) return { error: "Për dërgesë jashtë Kosovës, Shqipërisë dhe Maqedonisë na kontaktoni që ta llogarisim çmimin." };
   const subtotal = lines.reduce((sum, l) => sum + Number(l.book!.price) * l.qty, 0);
-  const shipping = subtotal >= Number(s.freeShippingFrom) ? 0 : Number(s.shippingPrice);
   const total = subtotal + shipping;
   const code = "JC-" + randomBytes(3).toString("hex").toUpperCase();
 

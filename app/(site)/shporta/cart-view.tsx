@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
-import { ArrowLeft, ArrowRight, Banknote, BookOpen, Check, CircleAlert, Minus, Plus, ShoppingBag, X } from "lucide-react";
+import { useActionState, useEffect, useState } from "react";
+import { ArrowLeft, ArrowRight, Banknote, BookOpen, Check, CircleAlert, Mail, MessageSquare, Minus, Phone, Plus, ShoppingBag, Truck, X } from "lucide-react";
 import { useCart } from "@/components/cart";
 import { money } from "@/lib/format";
+import { SHIPPING_COUNTRIES, shippingFor } from "@/lib/shipping";
 import { placeOrder, type FormState } from "../actions";
 
-export function CartView({ shippingPrice, freeFrom }: { shippingPrice: number; freeFrom: number }) {
+export function CartView({ regionalPrice, phone, email }: { regionalPrice: number; phone: string; email: string }) {
   const { lines, ready, setQty, remove, clear } = useCart();
+  const [country, setCountry] = useState<string>("Kosovë");
   const [state, action, pending] = useActionState<FormState, FormData>(placeOrder, {});
 
   useEffect(() => {
@@ -54,8 +56,8 @@ export function CartView({ shippingPrice, freeFrom }: { shippingPrice: number; f
   }
 
   const subtotal = lines.reduce((s, l) => s + l.price * l.qty, 0);
-  const shipping = subtotal >= freeFrom ? 0 : shippingPrice;
-  const total = subtotal + shipping;
+  const shipping = shippingFor(country, regionalPrice);
+  const total = subtotal + (shipping ?? 0);
   const count = lines.reduce((s, l) => s + l.qty, 0);
 
   return (
@@ -118,8 +120,8 @@ export function CartView({ shippingPrice, freeFrom }: { shippingPrice: number; f
             </label>
             <label className="field">
               Shteti
-              <select name="country" defaultValue="Kosovë">
-                {["Kosovë", "Shqipëri", "Maqedoni e Veriut", "Mal i Zi", "Tjetër"].map((c) => (
+              <select name="country" value={country} onChange={(e) => setCountry(e.target.value)}>
+                {SHIPPING_COUNTRIES.map((c) => (
                   <option key={c}>{c}</option>
                 ))}
               </select>
@@ -137,16 +139,45 @@ export function CartView({ shippingPrice, freeFrom }: { shippingPrice: number; f
               <textarea name="note" rows={3} style={{ minHeight: 80 }} />
             </label>
           </div>
-          <div className="pay-box">
-            <Banknote />
-            <div>
-              <strong>Pagesa në dorëzim</strong>
-              <span>Paguani me para në dorë kur ta pranoni porosinë.</span>
+          {shipping === null ? (
+            <div className="contact-ship">
+              <strong>
+                <MessageSquare /> Dërgesa në shtete tjera llogaritet veçmas
+              </strong>
+              <p>
+                Për porosi jashtë Kosovës, Shqipërisë dhe Maqedonisë, na kontaktoni personalisht që ta llogarisim çmimin e
+                postës. Pastaj e përfundojmë porosinë së bashku.
+              </p>
+              <div className="contact-ship-links">
+                {phone && (
+                  <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="btn btn-primary">
+                    <Phone /> {phone}
+                  </a>
+                )}
+                {email && (
+                  <a href={`mailto:${email}?subject=${encodeURIComponent("Porosi jashtë vendit")}`} className="btn btn-outline">
+                    <Mail /> {email}
+                  </a>
+                )}
+                <Link href="/kontakti" className="btn btn-outline">
+                  Faqja e kontaktit <ArrowRight />
+                </Link>
+              </div>
             </div>
-          </div>
-          <button className="btn btn-primary btn-block" type="submit" disabled={pending}>
-            {pending ? "Duke dërguar porosinë…" : `Përfundo porosinë · ${money(total)}`}
-          </button>
+          ) : (
+            <>
+              <div className="pay-box">
+                <Banknote />
+                <div>
+                  <strong>Pagesa në dorëzim</strong>
+                  <span>Paguani me para në dorë kur ta pranoni porosinë.</span>
+                </div>
+              </div>
+              <button className="btn btn-primary btn-block" type="submit" disabled={pending}>
+                {pending ? "Duke dërguar porosinë…" : `Përfundo porosinë · ${money(total)}`}
+              </button>
+            </>
+          )}
         </form>
       </div>
 
@@ -158,9 +189,19 @@ export function CartView({ shippingPrice, freeFrom }: { shippingPrice: number; f
         </div>
         <div className="summary-row">
           <span>Dërgesa</span>
-          <span>{shipping > 0 ? money(shipping) : "Falas"}</span>
+          <span>{shipping === null ? "Me marrëveshje" : shipping > 0 ? money(shipping) : "Falas"}</span>
         </div>
-        {shipping > 0 && <p className="summary-hint">Dërgesë falas për porosi mbi {money(freeFrom)}.</p>}
+        <ul className="ship-rules">
+          <li className={country === "Kosovë" ? "on" : ""}>
+            <Truck /> Kosovë: <strong>falas</strong>
+          </li>
+          <li className={country === "Shqipëri" || country === "Maqedoni e Veriut" ? "on" : ""}>
+            <Truck /> Shqipëri, Maqedoni: <strong>{regionalPrice > 0 ? money(regionalPrice) : "falas"}</strong>
+          </li>
+          <li className={shipping === null ? "on" : ""}>
+            <Truck /> Shtete tjera: <strong>na kontaktoni</strong>
+          </li>
+        </ul>
         <div className="summary-row summary-total">
           <span>Totali</span>
           <span>{money(total)}</span>

@@ -48,7 +48,7 @@ export default async function BookPage({ params }: Props) {
                 {price > 0 ? (
                   <>
                     <strong>{money(price)}</strong>
-                    <span>Pagesa në dorëzim · Dërgesë në Kosovë dhe rajon</span>
+                    <span>Pagesa në dorëzim · Dërgesë falas në Kosovë</span>
                   </>
                 ) : (
                   <span>Çmimi do të publikohet së shpejti. Na kontaktoni për porosi.</span>

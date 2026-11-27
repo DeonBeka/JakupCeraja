@@ -281,7 +281,6 @@ export async function saveSettings(_: ActionState, fd: FormData): Promise<Action
     facebook: str(fd, "facebook", 300),
     instagram: str(fd, "instagram", 300),
     shippingPrice: Math.max(0, num(fd, "shippingPrice")).toFixed(2),
-    freeShippingFrom: Math.max(0, num(fd, "freeShippingFrom")).toFixed(2),
   };
   for (const k of ["facebook", "instagram"] as const) {
     if (values[k] && !/^https?:\/\//.test(values[k])) values[k] = "https://" + values[k];
