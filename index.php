@@ -297,6 +297,16 @@ include 'includes/navbar.php';
                             ?>
                         </p>
 
+                        <div class="book-buy-row">
+                            <span class="book-price"><?php echo jc_money($book['price'] ?? 0); ?></span>
+                            <form method="post" action="cart-add.php" class="add-to-cart-form">
+                                <input type="hidden" name="book_id" value="<?php echo (int) $book['id']; ?>">
+                                <button type="submit" class="add-to-cart-btn" aria-label="Shto në shportë">
+                                    <i class="fa-solid fa-bag-shopping"></i> Shto
+                                </button>
+                            </form>
+                        </div>
+
                         <a
                             href="book-details.php?id=<?php echo $book['id']; ?>"
                             class="book-link"
@@ -717,6 +727,16 @@ include 'includes/navbar.php';
 
                         </p>
 
+
+                        <div class="book-buy-row">
+                            <span class="book-price"><?php echo jc_money($book['price'] ?? 0); ?></span>
+                            <form method="post" action="cart-add.php" class="add-to-cart-form">
+                                <input type="hidden" name="book_id" value="<?php echo (int) $book['id']; ?>">
+                                <button type="submit" class="add-to-cart-btn" aria-label="Shto në shportë">
+                                    <i class="fa-solid fa-bag-shopping"></i> Shto
+                                </button>
+                            </form>
+                        </div>
 
                         <a
                             href="book-details.php?id=<?php echo $book['id']; ?>"

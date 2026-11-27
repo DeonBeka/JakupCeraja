@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+
+    <?php if (!empty($jc_force_root_base)): ?><base href="/"><?php endif; ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Shtëpia Botuese "Jakup Ceraja"</title>

@@ -41,7 +41,8 @@ body .cart-btn:hover, body .cart-btn.is-active{ background:var(--primary); color
     margin:14px 0 10px;
     padding-top:14px; border-top:1px dashed var(--line);
 }
-.book-price{ font-family:'Playfair Display', serif; font-size:1.25rem; font-weight:700; color:var(--primary); }
+.book-buy-row{ flex-wrap:wrap; }
+.book-price{ font-family:'Playfair Display', serif; font-size:1.25rem; font-weight:700; color:var(--primary); white-space:nowrap; }
 .add-to-cart-form{ margin:0; display:inline-block; }
 .add-to-cart-btn{
     display:inline-flex; align-items:center; gap:8px;
