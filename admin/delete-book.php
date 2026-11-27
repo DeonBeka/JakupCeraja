@@ -108,7 +108,7 @@ if (mysqli_stmt_execute($delete)) {
                 file_exists($cover_file)
             ) {
 
-                unlink($cover_file);
+                jc_unlink($cover_file);
 
             }
 

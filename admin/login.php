@@ -1,6 +1,14 @@
 <?php
 
-session_start();
+require_once __DIR__ . '/../includes/database.php';
+jc_session_start();
+
+// No admin yet? Go to the one-time setup page.
+$jc_admin_count = mysqli_query($conn, "SELECT COUNT(*) AS c FROM admins");
+if ($jc_admin_count && (int) mysqli_fetch_assoc($jc_admin_count)['c'] === 0) {
+    header("Location: setup.php");
+    exit;
+}
 
 require_once '../includes/database.php';
 
@@ -135,6 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+<link rel="stylesheet" href="../assets/css/admin-mobile.css">
 </head>
 
 

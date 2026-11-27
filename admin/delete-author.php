@@ -129,7 +129,7 @@ if (mysqli_stmt_execute($delete)) {
             is_file($photo_path)
         ) {
 
-            unlink($photo_path);
+            jc_unlink($photo_path);
 
         }
 

@@ -1,0 +1,182 @@
+/* =====================================================================
+   ADMIN – polish + phone/tablet fixes (loaded after admin.css)
+===================================================================== */
+
+.admin-primary-button,
+.admin-primary-button i,
+.admin-primary-button span{
+    color:#fff !important;
+}
+
+/* tables never get cut off: they scroll sideways inside their card */
+[class$="table-wrapper"],
+[class*="table-wrapper "]{
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    max-width:100%;
+}
+[class$="table-wrapper"] table{ min-width:640px; }
+
+/* status pills for orders */
+.order-status{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:4px 10px; border-radius:999px;
+    font-size:.75rem; font-weight:600; white-space:nowrap;
+}
+.order-status::before{ content:""; width:7px; height:7px; border-radius:50%; background:currentColor; }
+.order-status.s-new{ background:#fdf3e1; color:#a5650b; }
+.order-status.s-confirmed{ background:#e6effa; color:#1f5aa6; }
+.order-status.s-shipped{ background:#efe8fa; color:#6236a8; }
+.order-status.s-completed{ background:#e5f2ea; color:#1F4D3A; }
+.order-status.s-cancelled{ background:#f8e9eb; color:#7A1F2B; }
+
+@media (max-width:900px){
+    .admin-content{ padding:16px !important; }
+
+    .admin-welcome{
+        padding:22px 20px !important;
+        min-height:0 !important;
+        border-radius:16px !important;
+    }
+    .admin-welcome h2{ font-size:1.35rem !important; }
+    .admin-welcome p{ font-size:.88rem !important; }
+    .admin-welcome-icon{ display:none !important; }
+
+    /* stat cards: two per row, compact */
+    .admin-stats,
+    .admin-order-stats,
+    [class$="-stats"]{
+        display:grid !important;
+        grid-template-columns:repeat(2, minmax(0, 1fr)) !important;
+        gap:12px !important;
+    }
+    .admin-stat-card,
+    [class*="-stat-card"]{
+        padding:14px !important;
+        min-height:0 !important;
+        gap:10px !important;
+        border-radius:14px !important;
+    }
+    .admin-stat-card i,
+    [class*="-stat-card"] > div:first-child:not(:only-child){
+        width:38px !important; height:38px !important; min-width:38px !important;
+        font-size:.95rem !important; border-radius:10px !important;
+    }
+    .admin-stat-card strong,
+    [class*="-stat-card"] strong,
+    [class*="-stat-card"] h3{ font-size:1.35rem !important; }
+
+    .admin-panel-header{
+        flex-wrap:wrap !important;
+        gap:12px !important;
+        align-items:flex-start !important;
+    }
+    .admin-panel-header h2{ font-size:1.3rem !important; }
+    .admin-panel-header .admin-primary-button{ width:100%; }
+}
+
+@media (max-width:420px){
+    .admin-stat-card span,
+    [class*="-stat-card"] span{ font-size:.75rem !important; }
+}
+
+/* dark-mode toggle hidden: the admin only has a light theme */
+#darkModeToggle{ display:none !important; }
+
+.admin-sidebar-overlay{
+    position:fixed; inset:0; z-index:998;
+    background:rgba(10,25,18,.45);
+    opacity:0; visibility:hidden;
+    transition:opacity .3s, visibility .3s;
+}
+.admin-sidebar-overlay.show{ opacity:1; visibility:visible; }
+@media (max-width:1000px){
+    .admin-sidebar{ z-index:999 !important; box-shadow:none; }
+    .admin-sidebar.open{ box-shadow:20px 0 40px -20px rgba(0,0,0,.4); }
+    body.admin-menu-open{ overflow:hidden; }
+}
+
+/* =====================================================================
+   ORDERS PAGE
+===================================================================== */
+.orders-flash{ display:flex; gap:10px; align-items:center; background:#e5f2ea; color:#1F4D3A; padding:12px 16px; border-radius:12px; margin-bottom:18px; font-weight:500; }
+.orders-kpis{ display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:14px; margin-bottom:20px; }
+.orders-kpi{ position:relative; background:#fff; border:1px solid var(--admin-border, #e8ece9); border-radius:14px; padding:16px 18px; }
+.orders-kpi span{ display:block; font-size:.8rem; color:#6b746f; margin-bottom:6px; }
+.orders-kpi strong{ font-size:1.5rem; color:#1d2a24; }
+.orders-kpi i{ position:absolute; right:16px; top:16px; width:34px; height:34px; display:grid; place-items:center; border-radius:10px; background:#eef4f0; color:#1F4D3A; }
+.orders-kpi.kpi-new i{ background:#fdf3e1; color:#a5650b; }
+
+.orders-panel{ padding:0 !important; overflow:hidden; }
+.orders-toolbar{ display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center; padding:16px 18px; border-bottom:1px solid var(--admin-border, #e8ece9); }
+.orders-tabs{ display:flex; gap:6px; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+.orders-tabs::-webkit-scrollbar{ display:none; }
+.orders-tabs a{ white-space:nowrap; padding:8px 12px; border-radius:999px; font-size:.85rem; font-weight:500; color:#47514c; text-decoration:none; background:#f4f6f4; }
+.orders-tabs a em{ font-style:normal; font-size:.75rem; opacity:.7; margin-left:3px; }
+.orders-tabs a.active{ background:#1F4D3A; color:#fff; }
+.orders-search{ position:relative; flex:1 1 220px; max-width:300px; }
+.orders-search i{ position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#9aa29e; font-size:.85rem; }
+.orders-search input{ width:100%; padding:10px 12px 10px 34px; border:1px solid #dfe4e0; border-radius:999px; font:inherit; font-size:.9rem; background:#fbfcfb; }
+.orders-search input:focus{ outline:0; border-color:#1F4D3A; box-shadow:0 0 0 3px rgba(31,77,58,.12); }
+
+.orders-empty{ text-align:center; padding:60px 20px; color:#6b746f; }
+.orders-empty i{ font-size:2.4rem; opacity:.35; margin-bottom:12px; display:block; }
+
+.order-card{ border-bottom:1px solid var(--admin-border, #e8ece9); }
+.order-card:last-child{ border-bottom:0; }
+.order-card.is-new summary{ box-shadow:inset 3px 0 0 #d9921f; }
+.order-card summary{ list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:14px; padding:16px 18px; transition:background .2s; }
+.order-card summary::-webkit-details-marker{ display:none; }
+.order-card summary:hover{ background:#fafbfa; }
+.order-card[open] summary{ background:#f7f9f7; }
+.order-main{ display:flex; align-items:center; gap:14px; min-width:0; }
+.order-code{ font:600 .78rem ui-monospace, monospace; letter-spacing:.06em; color:#7A1F2B; background:#f8eef0; padding:5px 8px; border-radius:7px; white-space:nowrap; }
+.order-customer{ min-width:0; }
+.order-customer strong{ display:block; color:#1d2a24; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.order-customer span{ font-size:.8rem; color:#7b847f; }
+.order-meta{ display:flex; align-items:center; gap:14px; flex-shrink:0; }
+.order-items-count{ font-size:.82rem; color:#6b746f; }
+.order-total{ color:#1d2a24; min-width:72px; text-align:right; }
+.order-chevron{ color:#9aa29e; transition:transform .2s; }
+.order-card[open] .order-chevron{ transform:rotate(180deg); }
+
+.order-body{ display:grid; grid-template-columns:minmax(0, 1.4fr) minmax(0, 1fr); gap:22px; padding:6px 18px 22px; }
+.order-book{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px dashed #e3e8e4; }
+.order-book-cover{ width:40px; height:56px; border-radius:4px; overflow:hidden; background:#f3efe8; display:grid; place-items:center; color:#1F4D3A; flex-shrink:0; }
+.order-book-cover img{ width:100%; height:100%; object-fit:cover; }
+.order-book-info{ flex:1; min-width:0; }
+.order-book-info strong{ display:block; font-size:.92rem; }
+.order-book-info span{ font-size:.8rem; color:#7b847f; }
+.order-book-total{ font-weight:600; font-size:.92rem; }
+.order-sums{ padding-top:10px; }
+.order-sums div{ display:flex; justify-content:space-between; font-size:.88rem; color:#5b6660; padding:4px 0; }
+.order-sums .order-sums-total{ font-weight:700; color:#1F4D3A; font-size:1rem; border-top:1px solid #e3e8e4; margin-top:6px; padding-top:10px; }
+
+.order-side{ display:flex; flex-direction:column; gap:16px; }
+.order-contact{ background:#f7f9f7; border-radius:12px; padding:14px 16px; }
+.order-contact h4{ font-size:.75rem; text-transform:uppercase; letter-spacing:.1em; color:#7b847f; margin-bottom:8px; }
+.order-contact a, .order-contact p{ display:flex; gap:10px; align-items:baseline; color:#1d2a24; text-decoration:none; font-size:.9rem; padding:4px 0; line-height:1.5; word-break:break-word; }
+.order-contact a:hover{ color:#1F4D3A; text-decoration:underline; }
+.order-contact i{ color:#1F4D3A; width:14px; flex-shrink:0; }
+.order-note{ background:#fff; border-radius:8px; padding:8px 10px !important; margin-top:6px; }
+.order-status-form label{ display:block; font-size:.8rem; font-weight:600; color:#47514c; margin-bottom:6px; }
+.order-status-row{ display:flex; gap:8px; }
+.order-status-row select{ flex:1; padding:10px 12px; border:1px solid #dfe4e0; border-radius:10px; font:inherit; background:#fff; }
+.order-delete{ border:0; background:transparent; color:#7A1F2B; font:500 .85rem inherit; cursor:pointer; padding:6px 0; }
+.order-delete:hover{ text-decoration:underline; }
+
+@media (max-width:900px){
+    .orders-kpis{ grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+    .orders-kpi{ padding:14px; }
+    .orders-kpi strong{ font-size:1.2rem; }
+    .orders-kpi i{ width:28px; height:28px; font-size:.8rem; right:12px; top:12px; }
+    .orders-search{ max-width:none; }
+    .order-body{ grid-template-columns:1fr; }
+}
+@media (max-width:600px){
+    .order-card summary{ flex-wrap:wrap; padding:14px; }
+    .order-main{ width:100%; }
+    .order-meta{ width:100%; justify-content:space-between; gap:10px; }
+    .order-code{ display:none; }
+    .order-body{ padding:4px 14px 18px; }
+}

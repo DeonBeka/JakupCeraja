@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                         if (
-                            !move_uploaded_file(
+                            !jc_move_uploaded_file(
                                 $file['tmp_name'],
                                 $destination
                             )
@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         is_file($old_photo)
                     ) {
 
-                        unlink($old_photo);
+                        jc_unlink($old_photo);
 
                     }
 
@@ -276,7 +276,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     )
                 ) {
 
-                    unlink(
+                    jc_unlink(
                         $upload_dir . $new_photo
                     );
 
@@ -326,6 +326,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+<link rel="stylesheet" href="../assets/css/admin-mobile.css">
 </head>
 
 

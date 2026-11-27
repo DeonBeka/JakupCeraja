@@ -38,6 +38,10 @@
 
     <link rel="stylesheet" href="assets/css/responsive.css">
 
+    <link rel="stylesheet" href="assets/css/redesign.css">
+
+    <link rel="stylesheet" href="assets/css/cart.css">
+
 </head>
 
 <body>

@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // ==================================
 
                 if (
-                    move_uploaded_file(
+                    jc_move_uploaded_file(
                         $image['tmp_name'],
                         $target
                     )
@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Nëse databaza dështon,
                     // fshije foton e sapo-ngarkuar
 
-                    unlink($target);
+                    jc_unlink($target);
 
                     mysqli_stmt_close($stmt);
 
@@ -253,6 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+<link rel="stylesheet" href="../assets/css/admin-mobile.css">
 </head>
 
 

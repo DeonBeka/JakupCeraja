@@ -145,12 +145,13 @@ if ($orders_count > 0) {
             orders.total_price,
             orders.status,
             orders.created_at,
-            books.title AS book_title
+            (
+                SELECT GROUP_CONCAT(CONCAT(order_items.quantity, '× ', order_items.book_title) SEPARATOR ', ')
+                FROM order_items
+                WHERE order_items.order_id = orders.id
+            ) AS book_title
 
         FROM orders
-
-        LEFT JOIN books
-            ON orders.book_id = books.id
 
         ORDER BY orders.created_at DESC
 
@@ -201,6 +202,7 @@ if ($orders_count > 0) {
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+<link rel="stylesheet" href="../assets/css/admin-mobile.css">
 </head>
 
 

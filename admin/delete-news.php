@@ -81,7 +81,7 @@ if (!empty($news['image'])) {
 
     if (file_exists($image_path)) {
 
-        unlink($image_path);
+        jc_unlink($image_path);
 
     }
 

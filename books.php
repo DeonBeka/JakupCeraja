@@ -145,6 +145,7 @@ include 'includes/navbar.php';
                         books.id,
                         books.title,
                         books.cover,
+                        books.price,
                         books.description,
                         books.publish_date,
                         books.featured,
@@ -382,6 +383,16 @@ include 'includes/navbar.php';
 
 
                             <!-- DETAILS -->
+
+                            <div class="book-buy-row">
+                                <span class="book-price"><?php echo jc_money($book['price']); ?></span>
+                                <form method="post" action="cart-add.php" class="add-to-cart-form">
+                                    <input type="hidden" name="book_id" value="<?php echo (int)$book['id']; ?>">
+                                    <button type="submit" class="add-to-cart-btn" aria-label="Shto në shportë">
+                                        <i class="fa-solid fa-bag-shopping"></i> Shto
+                                    </button>
+                                </form>
+                            </div>
 
                             <a
                                 href="book-details.php?id=<?php

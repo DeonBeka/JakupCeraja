@@ -1,0 +1,447 @@
+/* =====================================================================
+   REDESIGN  –  Shtëpia Botuese "Jakup Ceraja"
+   Load this file AFTER style.css and responsive.css.
+   Keeps the same brand colors (green / burgundy / cream),
+   only refines layout, typography and details.
+===================================================================== */
+
+:root{
+    --primary:#1F4D3A;
+    --primary-dark:#163A2C;
+    --primary-soft:#E8F0EA;
+    --secondary:#7A1F2B;
+    --accent:#F7F3ED;
+    --paper:#FBF8F3;
+    --ink:#1d2a24;
+    --line:rgba(31,77,58,.12);
+    --shadow:0 12px 32px -12px rgba(22,58,44,.18);
+    --shadow-lg:0 26px 50px -18px rgba(22,58,44,.28);
+    --radius:14px;
+}
+
+body{
+    background:var(--paper);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+}
+
+::selection{ background:var(--primary); color:#fff; }
+
+h1,h2,h3,h4{ letter-spacing:-.01em; }
+
+/* ---------- HEADER ---------- */
+
+body .header{
+    background:rgba(251,248,243,.88);
+    backdrop-filter:saturate(160%) blur(14px);
+    -webkit-backdrop-filter:saturate(160%) blur(14px);
+    box-shadow:none;
+    border-bottom:1px solid var(--line);
+}
+
+body .header::before{               /* thin brand stripe on top */
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--primary) 0 70%,var(--secondary) 70% 100%);
+}
+
+body .logo img{
+    height:64px;
+    transition:transform .3s ease;
+}
+body .logo:hover img{ transform:scale(1.03); }
+
+body .nav-links a{
+    position:relative;
+    font-weight:500;
+    color:var(--ink);
+    padding:6px 0;
+}
+body .nav-links a::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:-2px;
+    height:2px; border-radius:2px;
+    background:var(--secondary);
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .3s ease;
+}
+body .nav-links a:hover::after,
+body .nav-links a.active::after{ transform:scaleX(1); }
+body .nav-links a.active{ color:var(--primary); font-weight:600; }
+
+body .search-btn{
+    background:var(--primary);
+    color:#fff;
+    transition:background .3s, transform .3s;
+}
+body .search-btn:hover{ background:var(--secondary); transform:rotate(-8deg); }
+
+/* ---------- BUTTONS ---------- */
+
+body .btn{
+    border-radius:999px;
+    letter-spacing:.02em;
+    transition:transform .3s ease, box-shadow .3s ease, background .3s ease;
+}
+body .btn-primary{
+    background:var(--primary);
+    box-shadow:0 10px 22px -10px rgba(31,77,58,.65);
+}
+body .btn-primary:hover{
+    background:var(--secondary);
+    box-shadow:0 14px 26px -10px rgba(122,31,43,.55);
+    transform:translateY(-3px);
+}
+body .btn i{ transition:transform .3s ease; }
+body .btn:hover i{ transform:translateX(4px); }
+
+/* ---------- SECTION LABELS & HEADINGS ---------- */
+
+body .section-tag,
+body .hero-subtitle{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    font-size:.78rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--secondary);
+}
+body .section-tag::before,
+body .hero-subtitle::before{
+    content:"";
+    width:34px; height:1.5px;
+    background:currentColor;
+    opacity:.8;
+}
+body .section-heading .section-tag::after{   /* centered headings get a line on both sides */
+    content:"";
+    width:34px; height:1.5px;
+    background:currentColor;
+    opacity:.8;
+}
+
+body .section-heading h2,
+body .section-header h2,
+body .latest-header h2{
+    color:var(--primary);
+    position:relative;
+}
+body .section-heading h2::after{             /* small ornament under centered titles */
+    content:"\2766";
+    display:block;
+    font-size:1.5rem;
+    line-height:1;
+    color:var(--secondary);
+    opacity:.75;
+    margin-top:10px;
+}
+
+/* ---------- HERO ---------- */
+
+body .hero-slider{
+    background:
+        radial-gradient(1200px 500px at 85% 20%, rgba(31,77,58,.07), transparent 60%),
+        radial-gradient(800px 400px at 5% 90%, rgba(122,31,43,.05), transparent 60%),
+        var(--paper);
+}
+
+body .hero-text h1{
+    color:var(--primary);
+    line-height:1.08;
+}
+body .hero-text p{ color:#5b6660; font-size:1.08rem; line-height:1.75; }
+
+body .hero-image{ position:relative; }
+body .hero-image::before{                    /* offset frame behind the image */
+    content:"";
+    position:absolute;
+    inset:22px -22px -22px 22px;
+    border:2px solid var(--primary);
+    border-radius:var(--radius);
+    opacity:.25;
+    z-index:0;
+}
+body .hero-image img{
+    position:relative; z-index:1;
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-lg);
+}
+
+body .hero-arrow{
+    background:#fff;
+    color:var(--primary);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    transition:background .3s, color .3s;
+}
+body .hero-arrow:hover{ background:var(--primary); color:#fff; }
+
+body .hero-dot{ background:rgba(31,77,58,.25); }
+body .hero-dot.active{ background:var(--secondary); }
+
+/* ---------- ABOUT ---------- */
+
+body .about{ background:#fff; }
+
+body .about-image{ position:relative; }
+body .about-image::after{
+    content:"";
+    position:absolute;
+    width:120px; height:120px;
+    right:-18px; bottom:-18px;
+    background:radial-gradient(var(--secondary) 1.6px, transparent 1.8px) 0 0/14px 14px;
+    opacity:.35;
+    z-index:-1;
+}
+body .about-image img{ border-radius:var(--radius); box-shadow:var(--shadow-lg); }
+
+body .about-content h2{ color:var(--primary); }
+
+body .about-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    box-shadow:none;
+    border-radius:var(--radius);
+    transition:transform .3s, box-shadow .3s, border-color .3s;
+}
+body .about-card:hover{
+    transform:translateY(-6px);
+    box-shadow:var(--shadow);
+    border-color:transparent;
+}
+body .about-card i{
+    width:48px; height:48px;
+    display:inline-grid; place-items:center;
+    border-radius:12px;
+    background:var(--primary);
+    color:#fff;
+    font-size:1.1rem;
+}
+
+/* ---------- BOOK CARDS ---------- */
+
+body .featured-books{ background:var(--paper); }
+
+body .book-card{
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    box-shadow:none;
+    background:#fff;
+}
+body .book-card:hover{
+    transform:translateY(-8px);
+    box-shadow:var(--shadow-lg);
+}
+
+body .book-cover{
+    background:linear-gradient(135deg,var(--accent),var(--primary-soft));
+}
+body .book-cover::after{                     /* book spine shading */
+    content:"";
+    position:absolute; top:0; bottom:0; left:0;
+    width:14px;
+    background:linear-gradient(90deg,rgba(0,0,0,.22),rgba(255,255,255,.15) 60%,transparent);
+    pointer-events:none;
+}
+
+body .book-category,
+body .latest-category,
+body .home-news-category{
+    background:var(--secondary);
+    color:#fff;
+    border-radius:999px;
+    font-size:.7rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    font-weight:600;
+}
+body .latest-category,
+body .home-news-category{
+    display:inline-block;
+    padding:5px 12px;
+    line-height:1.3;
+    margin-bottom:10px;
+}
+
+body .book-content h3,
+body .latest-book-content h3{ color:var(--primary); line-height:1.25; }
+body .book-author,
+body .latest-author{ color:var(--secondary); }
+
+body .book-link,
+body .latest-link,
+body .home-news-link{
+    color:var(--primary);
+    font-weight:600;
+    border-bottom:1.5px solid transparent;
+    transition:color .3s, border-color .3s;
+}
+body .book-link:hover,
+body .latest-link:hover,
+body .home-news-link:hover{
+    color:var(--secondary);
+    border-color:var(--secondary);
+}
+
+/* ---------- CATEGORIES ---------- */
+
+body .categories-section{ background:#fff; }
+
+body .category-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    box-shadow:none;
+    border-radius:var(--radius);
+}
+body .category-card:hover{
+    background:var(--primary);
+    border-color:var(--primary);
+    transform:translateY(-6px);
+    box-shadow:var(--shadow-lg);
+}
+body .category-card:hover h3,
+body .category-card:hover p,
+body .category-card:hover .category-arrow{ color:#fff; }
+
+body .category-icon{
+    background:var(--primary);
+    color:#fff;
+    border-radius:12px;
+    transition:background .3s, color .3s;
+}
+body .category-card:hover .category-icon{ background:#fff; color:var(--primary); }
+
+/* ---------- WHY US (dark green band) ---------- */
+
+body .why-us{
+    background:
+        radial-gradient(700px 300px at 90% 0%, rgba(255,255,255,.06), transparent 60%),
+        var(--primary);
+    color:#fff;
+}
+body .why-us .section-tag{ color:#e9c9ce; }
+body .why-us .section-heading h2{ color:#fff; }
+body .why-us .section-heading h2::after{ color:#e9c9ce; }
+body .why-us .section-heading p{ color:rgba(255,255,255,.75); }
+
+body .why-card{
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--radius);
+}
+body .why-card:hover{
+    background:rgba(255,255,255,.1);
+    border-color:rgba(255,255,255,.25);
+    box-shadow:0 20px 40px -20px rgba(0,0,0,.45);
+}
+body .why-card h3{ color:#fff; }
+body .why-card p{ color:rgba(255,255,255,.72); }
+body .why-icon{
+    background:var(--accent);
+    color:var(--primary);
+    border-radius:12px;
+}
+
+/* ---------- LATEST PUBLICATIONS ---------- */
+
+body .latest-publications{ background:var(--paper); }
+
+body .latest-book-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:none;
+    transition:transform .3s, box-shadow .3s;
+}
+body .latest-book-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+body .latest-date{
+    background:rgba(255,255,255,.92);
+    color:var(--primary);
+    border-radius:999px;
+    font-weight:600;
+}
+
+/* ---------- AUTHORS ---------- */
+
+body .featured-authors{ background:#fff; }
+
+body .featured-author-card{
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:none;
+    border:1px solid var(--line);
+    transition:transform .3s, box-shadow .3s;
+}
+body .featured-author-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+body .featured-author-photo img{ filter:grayscale(.25); transition:filter .4s, transform .5s; }
+body .featured-author-card:hover .featured-author-photo img{ filter:none; }
+body .featured-author-overlay{
+    background:linear-gradient(180deg,transparent 40%,rgba(22,58,44,.85));
+}
+
+/* ---------- GALLERY ---------- */
+
+body .gallery-section{ background:var(--paper); }
+body .gallery-item{ border-radius:var(--radius); overflow:hidden; }
+body .gallery-overlay{
+    background:linear-gradient(180deg,transparent 35%,rgba(22,58,44,.88));
+}
+
+/* ---------- NEWS ---------- */
+
+body .home-news-section{ background:#fff; }
+body .home-news-card{
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:none;
+    transition:transform .3s, box-shadow .3s;
+}
+body .home-news-card:hover{ transform:translateY(-6px); box-shadow:var(--shadow-lg); }
+
+/* ---------- FOOTER ---------- */
+
+body .site-footer{
+    background:var(--primary-dark);
+    margin-top:0;
+    position:relative;
+}
+body .site-footer::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--secondary) 0 30%,var(--accent) 30% 100%);
+    opacity:.85;
+}
+body .footer-logo img{
+    filter:brightness(0) invert(95%) sepia(6%) saturate(300%);   /* makes the logo cream on the green */
+    max-height:90px;
+}
+body .footer-brand p,
+body .footer-column a,
+body .footer-contact{ color:rgba(255,255,255,.72); }
+body .footer-column a:hover{ color:#fff; }
+body .footer-social a{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.15);
+    transition:background .3s, transform .3s;
+}
+body .footer-social a:hover{ background:var(--secondary); border-color:var(--secondary); transform:translateY(-3px); }
+body .site-footer .footer-contact-button,
+body .site-footer .footer-contact-button *{
+    background-color:var(--accent);
+    color:var(--primary) !important;
+}
+body .site-footer .footer-contact-button *{ background:none; }
+body .site-footer .footer-contact-button:hover{ background-color:var(--secondary); }
+body .site-footer .footer-contact-button:hover,
+body .site-footer .footer-contact-button:hover *{ color:#fff !important; }
+body .footer-bottom{ border-top:1px solid rgba(255,255,255,.1); color:rgba(255,255,255,.55); }
+
+/* ---------- SMALL SCREENS ---------- */
+
+@media (max-width:768px){
+    body .hero-image::before{ display:none; }
+    body .about-image::after{ display:none; }
+    body .logo img{ height:52px; }
+}
