@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                     if (
-                        move_uploaded_file(
+                        jc_move_uploaded_file(
                             $_FILES['cover']['tmp_name'],
                             $target
                         )
@@ -370,6 +370,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+<link rel="stylesheet" href="../assets/css/admin-mobile.css">
 </head>
 
 

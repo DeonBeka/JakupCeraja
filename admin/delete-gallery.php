@@ -90,7 +90,7 @@ if (mysqli_stmt_execute($stmt)) {
             is_file($image_path)
         ) {
 
-            unlink($image_path);
+            jc_unlink($image_path);
 
         }
 

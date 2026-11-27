@@ -1,240 +1,113 @@
 <?php
 
-
 require_once '../includes/auth.php';
 require_once '../includes/database.php';
 
-
-// ==========================================
-// UPDATE ORDER STATUS
-// ==========================================
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
-
-    $order_id = isset($_POST['order_id'])
-        ? (int) $_POST['order_id']
-        : 0;
-
-    $status = isset($_POST['status'])
-        ? trim($_POST['status'])
-        : '';
-
-    $allowed_statuses = [
-        'new',
-        'confirmed',
-        'shipped',
-        'completed',
-        'cancelled'
-    ];
-
-    if (
-        $order_id > 0 &&
-        in_array($status, $allowed_statuses, true)
-    ) {
-
-        $stmt = mysqli_prepare(
-            $conn,
-            "UPDATE orders SET status = ? WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param(
-            $stmt,
-            "si",
-            $status,
-            $order_id
-        );
-
-        mysqli_stmt_execute($stmt);
-
-        mysqli_stmt_close($stmt);
-    }
-
-    header("Location: orders.php");
-    exit;
-}
-
-
-// ==========================================
-// DELETE ORDER
-// ==========================================
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_order'])) {
-
-    $order_id = isset($_POST['order_id'])
-        ? (int) $_POST['order_id']
-        : 0;
-
-    if ($order_id > 0) {
-
-        $stmt = mysqli_prepare(
-            $conn,
-            "DELETE FROM orders WHERE id = ?"
-        );
-
-        mysqli_stmt_bind_param(
-            $stmt,
-            "i",
-            $order_id
-        );
-
-        mysqli_stmt_execute($stmt);
-
-        mysqli_stmt_close($stmt);
-    }
-
-    header("Location: orders.php");
-    exit;
-}
-
-
-// ==========================================
-// FILTER
-// ==========================================
-
-$filter_status = isset($_GET['status'])
-    ? trim($_GET['status'])
-    : '';
-
-$search = isset($_GET['search'])
-    ? trim($_GET['search'])
-    : '';
-
-
-// ==========================================
-// BUILD QUERY
-// ==========================================
-
-$sql = "
-    SELECT
-        orders.*,
-        books.title AS book_title,
-        books.cover AS book_cover
-
-    FROM orders
-
-    LEFT JOIN books
-        ON orders.book_id = books.id
-
-    WHERE 1=1
-";
-
-$params = [];
-$types = "";
-
-
-// STATUS FILTER
-
-if ($filter_status !== '') {
-
-    $sql .= " AND orders.status = ?";
-
-    $params[] = $filter_status;
-    $types .= "s";
-}
-
-
-// SEARCH
-
-if ($search !== '') {
-
-    $sql .= "
-        AND (
-            orders.fullname LIKE ?
-            OR orders.email LIKE ?
-            OR orders.phone LIKE ?
-            OR orders.city LIKE ?
-            OR books.title LIKE ?
-        )
-    ";
-
-    $search_value = "%" . $search . "%";
-
-    $params[] = $search_value;
-    $params[] = $search_value;
-    $params[] = $search_value;
-    $params[] = $search_value;
-    $params[] = $search_value;
-
-    $types .= "sssss";
-}
-
-
-$sql .= "
-    ORDER BY orders.created_at DESC
-";
-
-
-// ==========================================
-// PREPARE QUERY
-// ==========================================
-
-$stmt = mysqli_prepare($conn, $sql);
-
-if (!empty($params)) {
-
-    mysqli_stmt_bind_param(
-        $stmt,
-        $types,
-        ...$params
-    );
-}
-
-mysqli_stmt_execute($stmt);
-
-$result = mysqli_stmt_get_result($stmt);
-
-
-// ==========================================
-// ORDER COUNTS
-// ==========================================
-
-$count_query = mysqli_query(
-    $conn,
-    "
-    SELECT
-        COUNT(*) AS total,
-
-        SUM(status = 'new') AS new_orders,
-
-        SUM(status = 'confirmed') AS confirmed_orders,
-
-        SUM(status = 'shipped') AS shipped_orders,
-
-        SUM(status = 'completed') AS completed_orders,
-
-        SUM(status = 'cancelled') AS cancelled_orders
-
-    FROM orders
-"
-);
-
-$count_data = mysqli_fetch_assoc($count_query);
-
-$total_orders = (int)($count_data['total'] ?? 0);
-$new_orders = (int)($count_data['new_orders'] ?? 0);
-$confirmed_orders = (int)($count_data['confirmed_orders'] ?? 0);
-$shipped_orders = (int)($count_data['shipped_orders'] ?? 0);
-$completed_orders = (int)($count_data['completed_orders'] ?? 0);
-$cancelled_orders = (int)($count_data['cancelled_orders'] ?? 0);
-
-
-// ==========================================
-// STATUS NAMES
-// ==========================================
-
-$status_names = [
-
-    'new' => 'E re',
-
-    'confirmed' => 'E konfirmuar',
-
-    'shipped' => 'Dërguar',
-
+$allowed_statuses = [
+    'new'       => 'E re',
+    'confirmed' => 'Konfirmuar',
+    'shipped'   => 'Dërguar',
     'completed' => 'Përfunduar',
-
-    'cancelled' => 'Anuluar'
-
+    'cancelled' => 'Anuluar',
 ];
+
+if (empty($_SESSION['csrf'])) {
+    $_SESSION['csrf'] = bin2hex(random_bytes(16));
+}
+
+// ==========================================
+// ACTIONS (change status / delete)
+// ==========================================
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
+    $order_id = (int) ($_POST['order_id'] ?? 0);
+    $back = 'orders.php' . (!empty($_POST['back']) ? '?' . preg_replace('/[^a-zA-Z0-9=&_%-]/', '', $_POST['back']) : '');
+
+    if (isset($_POST['update_status']) && isset($allowed_statuses[$_POST['status'] ?? ''])) {
+        $st = $conn->prepare('UPDATE orders SET status = ? WHERE id = ?');
+        $st->bind_param('si', $_POST['status'], $order_id);
+        $st->execute();
+        $_SESSION['orders_flash'] = 'Statusi u përditësua.';
+    }
+
+    if (isset($_POST['delete_order'])) {
+        $st = $conn->prepare('DELETE FROM order_items WHERE order_id = ?');
+        $st->bind_param('i', $order_id);
+        $st->execute();
+        $st = $conn->prepare('DELETE FROM orders WHERE id = ?');
+        $st->bind_param('i', $order_id);
+        $st->execute();
+        $_SESSION['orders_flash'] = 'Porosia u fshi.';
+        $back = 'orders.php';
+    }
+
+    header('Location: ' . $back);
+    exit;
+}
+
+$flash = $_SESSION['orders_flash'] ?? '';
+unset($_SESSION['orders_flash']);
+
+// ==========================================
+// STATS
+// ==========================================
+
+$stats = ['all' => 0, 'new' => 0, 'confirmed' => 0, 'shipped' => 0, 'completed' => 0, 'cancelled' => 0];
+$revenue = 0;
+$res = $conn->query('SELECT status, COUNT(*) AS c, SUM(total_price) AS t FROM orders GROUP BY status');
+while ($res && $r = $res->fetch_assoc()) {
+    $stats[$r['status']] = (int) $r['c'];
+    $stats['all'] += (int) $r['c'];
+    if ($r['status'] !== 'cancelled') {
+        $revenue += (float) $r['t'];
+    }
+}
+
+// ==========================================
+// LIST (filter + search)
+// ==========================================
+
+$filter = $_GET['status'] ?? '';
+$search = trim($_GET['search'] ?? '');
+$where  = [];
+$types  = '';
+$params = [];
+
+if (isset($allowed_statuses[$filter])) {
+    $where[] = 'o.status = ?';
+    $types .= 's';
+    $params[] = $filter;
+}
+if ($search !== '') {
+    $where[] = '(o.fullname LIKE ? OR o.email LIKE ? OR o.phone LIKE ? OR o.order_code LIKE ? OR o.city LIKE ?)';
+    $like = '%' . $search . '%';
+    $types .= 'sssss';
+    array_push($params, $like, $like, $like, $like, $like);
+}
+
+$sql = 'SELECT o.*, (SELECT SUM(quantity) FROM order_items WHERE order_id = o.id) AS items_count
+        FROM orders o' . ($where ? ' WHERE ' . implode(' AND ', $where) : '') . '
+        ORDER BY o.created_at DESC, o.id DESC LIMIT 200';
+$st = $conn->prepare($sql);
+if ($params) {
+    $st->bind_param($types, ...$params);
+}
+$st->execute();
+$orders = $st->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// items for the listed orders
+$items_by_order = [];
+if ($orders) {
+    $ids = implode(',', array_map('intval', array_column($orders, 'id')));
+    $res = $conn->query("SELECT * FROM order_items WHERE order_id IN ($ids) ORDER BY id");
+    while ($res && $r = $res->fetch_assoc()) {
+        $items_by_order[$r['order_id']][] = $r;
+    }
+}
+
+$new_orders = $stats["new"];
+$h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
+$back_qs = http_build_query(array_filter(['status' => $filter, 'search' => $search]));
 
 ?>
 
@@ -270,6 +143,7 @@ $status_names = [
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
+<link rel="stylesheet" href="../assets/css/admin-mobile.css">
 </head>
 
 
@@ -529,705 +403,142 @@ $status_names = [
 
         <div class="admin-content">
 
+            <?php if ($flash): ?>
+                <div class="orders-flash"><i class="fa-solid fa-circle-check"></i> <?php echo $h($flash); ?></div>
+            <?php endif; ?>
 
-            <!-- =================================
-                 PAGE HEADER
-            ================================== -->
-
-            <div class="admin-page-heading">
-
-                <div>
-
-                    <span>
-                        POROSITË E KLIENTËVE
-                    </span>
-
-                    <h2>
-                        Menaxho porositë
-                    </h2>
-
-                    <p>
-                        Shiko të gjitha porositë dhe
-                        përditëso statusin e tyre.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <!-- =================================
-                 ORDER STATS
-            ================================== -->
-
-            <div class="admin-order-stats">
-
-
-                <div class="admin-order-stat">
-
-                    <div>
-
-                        <span>
-                            Të gjitha
-                        </span>
-
-                        <strong>
-                            <?php echo $total_orders; ?>
-                        </strong>
-
-                    </div>
-
+            <div class="orders-kpis">
+                <div class="orders-kpi">
+                    <span>Të gjitha</span>
+                    <strong><?php echo $stats['all']; ?></strong>
                     <i class="fa-solid fa-cart-shopping"></i>
-
                 </div>
-
-
-                <div class="admin-order-stat">
-
-                    <div>
-
-                        <span>
-                            Të reja
-                        </span>
-
-                        <strong>
-                            <?php echo $new_orders; ?>
-                        </strong>
-
-                    </div>
-
+                <div class="orders-kpi kpi-new">
+                    <span>Të reja</span>
+                    <strong><?php echo $stats['new']; ?></strong>
                     <i class="fa-solid fa-bell"></i>
-
                 </div>
-
-
-                <div class="admin-order-stat">
-
-                    <div>
-
-                        <span>
-                            Të dërguara
-                        </span>
-
-                        <strong>
-                            <?php echo $shipped_orders; ?>
-                        </strong>
-
-                    </div>
-
+                <div class="orders-kpi">
+                    <span>Në proces</span>
+                    <strong><?php echo $stats['confirmed'] + $stats['shipped']; ?></strong>
                     <i class="fa-solid fa-truck"></i>
-
                 </div>
-
-
-                <div class="admin-order-stat">
-
-                    <div>
-
-                        <span>
-                            Përfunduara
-                        </span>
-
-                        <strong>
-                            <?php echo $completed_orders; ?>
-                        </strong>
-
-                    </div>
-
-                    <i class="fa-solid fa-check"></i>
-
+                <div class="orders-kpi">
+                    <span>Të ardhura</span>
+                    <strong><?php echo jc_money($revenue); ?></strong>
+                    <i class="fa-solid fa-euro-sign"></i>
                 </div>
-
-
             </div>
 
+            <section class="admin-panel-card orders-panel">
 
-            <!-- =================================
-                 FILTERS
-            ================================== -->
-
-            <div class="admin-filter-card">
-
-
-                <form
-                    method="GET"
-                    action="orders.php"
-                    class="admin-filter-form"
-                >
-
-
-                    <div class="admin-search-box">
-
+                <div class="orders-toolbar">
+                    <div class="orders-tabs">
+                        <a href="orders.php<?php echo $search !== '' ? '?search=' . urlencode($search) : ''; ?>" class="<?php echo $filter === '' ? 'active' : ''; ?>">Të gjitha <em><?php echo $stats['all']; ?></em></a>
+                        <?php foreach ($allowed_statuses as $key => $label): ?>
+                            <a href="?<?php echo $h(http_build_query(array_filter(['status' => $key, 'search' => $search]))); ?>" class="<?php echo $filter === $key ? 'active' : ''; ?>"><?php echo $label; ?> <em><?php echo $stats[$key]; ?></em></a>
+                        <?php endforeach; ?>
+                    </div>
+                    <form class="orders-search" method="get">
+                        <?php if ($filter): ?><input type="hidden" name="status" value="<?php echo $h($filter); ?>"><?php endif; ?>
                         <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="search" name="search" value="<?php echo $h($search); ?>" placeholder="Kërko emër, telefon, kod…">
+                    </form>
+                </div>
 
-                        <input
-                            type="text"
-                            name="search"
-                            placeholder="Kërko klientin, librin, telefonin..."
-                            value="<?php echo htmlspecialchars($search); ?>"
-                        >
-
+                <?php if (!$orders): ?>
+                    <div class="orders-empty">
+                        <i class="fa-solid fa-inbox"></i>
+                        <p><?php echo ($filter || $search) ? 'Asnjë porosi nuk përputhet me kërkimin.' : 'Ende nuk ka porosi. Kur dikush blen libra, porositë shfaqen këtu.'; ?></p>
                     </div>
-
-
-                    <select
-                        name="status"
-                        class="admin-filter-select"
-                    >
-
-                        <option value="">
-                            Të gjitha statuset
-                        </option>
-
-                        <option
-                            value="new"
-                            <?php echo $filter_status === 'new' ? 'selected' : ''; ?>
-                        >
-                            E re
-                        </option>
-
-                        <option
-                            value="confirmed"
-                            <?php echo $filter_status === 'confirmed' ? 'selected' : ''; ?>
-                        >
-                            E konfirmuar
-                        </option>
-
-                        <option
-                            value="shipped"
-                            <?php echo $filter_status === 'shipped' ? 'selected' : ''; ?>
-                        >
-                            Dërguar
-                        </option>
-
-                        <option
-                            value="completed"
-                            <?php echo $filter_status === 'completed' ? 'selected' : ''; ?>
-                        >
-                            Përfunduar
-                        </option>
-
-                        <option
-                            value="cancelled"
-                            <?php echo $filter_status === 'cancelled' ? 'selected' : ''; ?>
-                        >
-                            Anuluar
-                        </option>
-
-                    </select>
-
-
-                    <button
-                        type="submit"
-                        class="admin-filter-button"
-                    >
-
-                        <i class="fa-solid fa-filter"></i>
-
-                        Filtro
-
-                    </button>
-
-
-                    <?php if ($search !== '' || $filter_status !== ''): ?>
-
-                        <a
-                            href="orders.php"
-                            class="admin-clear-filter"
-                        >
-
-                            Pastro
-
-                        </a>
-
-                    <?php endif; ?>
-
-
-                </form>
-
-
-            </div>
-
-
-            <!-- =================================
-                 ORDERS
-            ================================== -->
-
-            <div class="admin-orders-list">
-
-
-                <?php if ($result && mysqli_num_rows($result) > 0): ?>
-
-
-                    <?php while ($order = mysqli_fetch_assoc($result)): ?>
-
-
-                        <article class="admin-order-card">
-
-
-                            <!-- ORDER TOP -->
-
-                            <div class="admin-order-card-top">
-
-
-                                <div class="admin-order-number">
-
-                                    <span>
-                                        POROSIA
-                                    </span>
-
-                                    <strong>
-                                        #<?php echo (int)$order['id']; ?>
-                                    </strong>
-
-                                </div>
-
-
-                                <div class="admin-order-date">
-
-                                    <i class="fa-regular fa-calendar"></i>
-
-                                    <?php
-
-                                    echo date(
-                                        'd.m.Y H:i',
-                                        strtotime(
-                                            $order['created_at']
-                                        )
-                                    );
-
-                                    ?>
-
-                                </div>
-
-
-                            </div>
-
-
-                            <!-- ORDER BODY -->
-
-                            <div class="admin-order-card-body">
-
-
-                                <!-- CUSTOMER -->
-
-                                <div class="admin-order-section">
-
-
-                                    <div class="admin-order-section-title">
-
-                                        <i class="fa-solid fa-user"></i>
-
-                                        Klienti
-
-                                    </div>
-
-
-                                    <div class="admin-customer-name">
-
-                                        <?php
-
-                                        echo htmlspecialchars(
-                                            $order['fullname']
-                                        );
-
-                                        ?>
-
-                                    </div>
-
-
-                                    <div class="admin-customer-details">
-
-                                        <span>
-
-                                            <i class="fa-solid fa-phone"></i>
-
-                                            <?php
-
-                                            echo htmlspecialchars(
-                                                $order['phone']
-                                            );
-
-                                            ?>
-
-                                        </span>
-
-
-                                        <?php if (!empty($order['email'])): ?>
-
-                                            <span>
-
-                                                <i class="fa-solid fa-envelope"></i>
-
-                                                <?php
-
-                                                echo htmlspecialchars(
-                                                    $order['email']
-                                                );
-
-                                                ?>
-
-                                            </span>
-
-                                        <?php endif; ?>
-
-
-                                    </div>
-
-
-                                </div>
-
-
-                                <!-- ADDRESS -->
-
-                                <div class="admin-order-section">
-
-
-                                    <div class="admin-order-section-title">
-
-                                        <i class="fa-solid fa-location-dot"></i>
-
-                                        Adresa e dërgesës
-
-                                    </div>
-
-
-                                    <div class="admin-address">
-
-                                        <?php
-
-                                        echo htmlspecialchars(
-                                            $order['address']
-                                        );
-
-                                        ?>
-
-                                    </div>
-
-
-                                    <div class="admin-address-location">
-
-                                        <?php
-
-                                        echo htmlspecialchars(
-                                            $order['city']
-                                        );
-
-                                        ?>,
-
-                                        <?php
-
-                                        echo htmlspecialchars(
-                                            $order['country']
-                                        );
-
-                                        ?>
-
-                                    </div>
-
-
-                                </div>
-
-
-                                <!-- BOOK -->
-
-                                <div class="admin-order-section">
-
-
-                                    <div class="admin-order-section-title">
-
-                                        <i class="fa-solid fa-book"></i>
-
-                                        Libri
-
-                                    </div>
-
-
-                                    <div class="admin-order-book">
-
-
-                                        <div class="admin-order-book-cover">
-
-
-                                            <?php if (!empty($order['book_cover'])): ?>
-
-                                                <img
-                                                    src="../assets/uploads/<?php echo htmlspecialchars($order['book_cover']); ?>"
-                                                    alt=""
-                                                >
-
-                                            <?php else: ?>
-
-                                                <i class="fa-solid fa-book"></i>
-
-                                            <?php endif; ?>
-
-
-                                        </div>
-
-
-                                        <div>
-
-                                            <strong>
-
-                                                <?php
-
-                                                echo htmlspecialchars(
-                                                    $order['book_title']
-                                                    ?? 'Libër i fshirë'
-                                                );
-
-                                                ?>
-
-                                            </strong>
-
-                                            <span>
-
-                                                <?php
-
-                                                echo number_format(
-                                                    (float)$order['book_price'],
-                                                    2
-                                                );
-
-                                                ?> €
-
-                                            </span>
-
-                                        </div>
-
-
-                                    </div>
-
-
-                                </div>
-
-
-                                <!-- PRICE -->
-
-                                <div class="admin-order-section admin-order-price-section">
-
-
-                                    <div class="admin-price-row">
-
-                                        <span>
-                                            Libri
-                                        </span>
-
-                                        <strong>
-
-                                            <?php
-
-                                            echo number_format(
-                                                (float)$order['book_price'],
-                                                2
-                                            );
-
-                                            ?> €
-
-                                        </strong>
-
-                                    </div>
-
-
-                                    <div class="admin-price-row">
-
-                                        <span>
-                                            Posta
-                                        </span>
-
-                                        <strong>
-
-                                            <?php
-
-                                            echo number_format(
-                                                (float)$order['shipping_price'],
-                                                2
-                                            );
-
-                                            ?> €
-
-                                        </strong>
-
-                                    </div>
-
-
-                                    <div class="admin-price-total">
-
-                                        <span>
-                                            TOTALI
-                                        </span>
-
-                                        <strong>
-
-                                            <?php
-
-                                            echo number_format(
-                                                (float)$order['total_price'],
-                                                2
-                                            );
-
-                                            ?> €
-
-                                        </strong>
-
-                                    </div>
-
-
-                                </div>
-
-
-                            </div>
-
-
-                            <!-- ORDER FOOTER -->
-
-                            <div class="admin-order-card-footer">
-
-
-                                <!-- STATUS -->
-
-                                <form
-                                    method="POST"
-                                    class="admin-status-form"
-                                >
-
-                                    <input
-                                        type="hidden"
-                                        name="order_id"
-                                        value="<?php echo (int)$order['id']; ?>"
-                                    >
-
-
-                                    <label>
-                                        Statusi
-                                    </label>
-
-
-                                    <select
-                                        name="status"
-                                        class="order-status-select <?php echo htmlspecialchars($order['status']); ?>"
-                                        onchange="this.form.submit()"
-                                    >
-
-                                        <?php foreach ($status_names as $key => $name): ?>
-
-                                            <option
-                                                value="<?php echo $key; ?>"
-                                                <?php echo $order['status'] === $key ? 'selected' : ''; ?>
-                                            >
-
-                                                <?php echo $name; ?>
-
-                                            </option>
-
-                                        <?php endforeach; ?>
-
-                                    </select>
-
-
-                                    <input
-                                        type="hidden"
-                                        name="update_status"
-                                        value="1"
-                                    >
-
-                                </form>
-
-
-                                <!-- DELETE -->
-
-                                <form
-                                    method="POST"
-                                    onsubmit="return confirm('A jeni të sigurt që dëshironi ta fshini këtë porosi?');"
-                                >
-
-                                    <input
-                                        type="hidden"
-                                        name="order_id"
-                                        value="<?php echo (int)$order['id']; ?>"
-                                    >
-
-                                    <button
-                                        type="submit"
-                                        name="delete_order"
-                                        class="admin-delete-order"
-                                    >
-
-                                        <i class="fa-solid fa-trash"></i>
-
-                                        Fshi porosinë
-
-                                    </button>
-
-                                </form>
-
-
-                            </div>
-
-
-                        </article>
-
-
-                    <?php endwhile; ?>
-
-
                 <?php else: ?>
+                    <div class="orders-list">
+                        <?php foreach ($orders as $o): $items = $items_by_order[$o['id']] ?? []; ?>
+                            <details class="order-card<?php echo $o['status'] === 'new' ? ' is-new' : ''; ?>">
+                                <summary>
+                                    <div class="order-main">
+                                        <div class="order-code"><?php echo $h($o['order_code']); ?></div>
+                                        <div class="order-customer">
+                                            <strong><?php echo $h($o['fullname']); ?></strong>
+                                            <span><?php echo $h($o['city']); ?> · <?php echo date('d.m.Y H:i', strtotime($o['created_at'])); ?></span>
+                                        </div>
+                                    </div>
+                                    <div class="order-meta">
+                                        <span class="order-items-count"><i class="fa-solid fa-book"></i> <?php echo (int) $o['items_count']; ?></span>
+                                        <span class="order-status s-<?php echo $h($o['status']); ?>"><?php echo $h($allowed_statuses[$o['status']] ?? $o['status']); ?></span>
+                                        <strong class="order-total"><?php echo jc_money($o['total_price']); ?></strong>
+                                        <i class="fa-solid fa-chevron-down order-chevron"></i>
+                                    </div>
+                                </summary>
 
+                                <div class="order-body">
+                                    <div class="order-books">
+                                        <?php foreach ($items as $it): ?>
+                                            <div class="order-book">
+                                                <div class="order-book-cover">
+                                                    <?php if ($it['book_cover']): ?><img src="../<?php echo $h($it['book_cover']); ?>" alt=""><?php else: ?><i class="fa-solid fa-book"></i><?php endif; ?>
+                                                </div>
+                                                <div class="order-book-info">
+                                                    <strong><?php echo $h($it['book_title']); ?></strong>
+                                                    <span><?php echo (int) $it['quantity']; ?> × <?php echo jc_money($it['unit_price']); ?></span>
+                                                </div>
+                                                <div class="order-book-total"><?php echo jc_money($it['quantity'] * $it['unit_price']); ?></div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <div class="order-sums">
+                                            <div><span>Librat</span><span><?php echo jc_money($o['subtotal']); ?></span></div>
+                                            <div><span>Dërgesa</span><span><?php echo (float) $o['shipping_price'] > 0 ? jc_money($o['shipping_price']) : 'Falas'; ?></span></div>
+                                            <div class="order-sums-total"><span>Totali</span><span><?php echo jc_money($o['total_price']); ?></span></div>
+                                        </div>
+                                    </div>
 
-                    <div class="admin-no-orders">
+                                    <div class="order-side">
+                                        <div class="order-contact">
+                                            <h4>Klienti</h4>
+                                            <a href="tel:<?php echo $h(preg_replace('/[^0-9+]/', '', $o['phone'])); ?>"><i class="fa-solid fa-phone"></i> <?php echo $h($o['phone']); ?></a>
+                                            <a href="mailto:<?php echo $h($o['email']); ?>"><i class="fa-solid fa-envelope"></i> <?php echo $h($o['email']); ?></a>
+                                            <p><i class="fa-solid fa-location-dot"></i> <?php echo $h($o['address']); ?>, <?php echo $h($o['city']); ?>, <?php echo $h($o['country']); ?></p>
+                                            <?php if (!empty($o['note'])): ?>
+                                                <p class="order-note"><i class="fa-solid fa-message"></i> <?php echo nl2br($h($o['note'])); ?></p>
+                                            <?php endif; ?>
+                                        </div>
 
+                                        <form method="post" class="order-status-form">
+                                            <input type="hidden" name="csrf" value="<?php echo $h($_SESSION['csrf']); ?>">
+                                            <input type="hidden" name="order_id" value="<?php echo (int) $o['id']; ?>">
+                                            <input type="hidden" name="back" value="<?php echo $h($back_qs); ?>">
+                                            <label for="st-<?php echo (int) $o['id']; ?>">Ndrysho statusin</label>
+                                            <div class="order-status-row">
+                                                <select id="st-<?php echo (int) $o['id']; ?>" name="status">
+                                                    <?php foreach ($allowed_statuses as $key => $label): ?>
+                                                        <option value="<?php echo $key; ?>"<?php echo $o['status'] === $key ? ' selected' : ''; ?>><?php echo $label; ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                                <button type="submit" name="update_status" value="1" class="admin-primary-button">Ruaj</button>
+                                            </div>
+                                        </form>
 
-                        <div>
-
-                            <i class="fa-solid fa-cart-shopping"></i>
-
-                        </div>
-
-
-                        <h3>
-                            Nuk u gjet asnjë porosi
-                        </h3>
-
-
-                        <p>
-
-                            <?php if ($search !== '' || $filter_status !== ''): ?>
-
-                                Provo të ndryshosh filtrat.
-
-                            <?php else: ?>
-
-                                Kur klientët të bëjnë porosi,
-                                ato do të shfaqen këtu.
-
-                            <?php endif; ?>
-
-                        </p>
-
-
+                                        <form method="post" onsubmit="return confirm('A jeni i sigurt që doni ta fshini këtë porosi?');">
+                                            <input type="hidden" name="csrf" value="<?php echo $h($_SESSION['csrf']); ?>">
+                                            <input type="hidden" name="order_id" value="<?php echo (int) $o['id']; ?>">
+                                            <button type="submit" name="delete_order" value="1" class="order-delete"><i class="fa-solid fa-trash"></i> Fshi porosinë</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </details>
+                        <?php endforeach; ?>
                     </div>
-
-
                 <?php endif; ?>
 
-
-            </div>
-
+            </section>
 
         </div>
 
-
     </main>
-
 
 </div>
 
-
 <script src="../assets/js/admin.js"></script>
-
-<script src="../assets/js/darkmode.js"></script>
-
 
 </body>
 

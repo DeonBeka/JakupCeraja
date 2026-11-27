@@ -23,6 +23,7 @@ $book_query = "
         books.id,
         books.title,
         books.cover,
+        books.price,
         books.description,
         books.publish_date,
         books.featured,
@@ -399,6 +400,11 @@ $book = mysqli_fetch_assoc(
 
                   <!-- BUTTONS -->
 
+                    <div class="book-details-price">
+                        <span>Çmimi</span>
+                        <strong><?php echo jc_money($book['price'] ?? 0); ?></strong>
+                    </div>
+
                     <div class="book-details-buttons">
 
                         <a
@@ -412,6 +418,14 @@ $book = mysqli_fetch_assoc(
 
                         </a>
 
+
+                        <form method="post" action="cart-add.php" class="add-to-cart-form">
+                            <input type="hidden" name="book_id" value="<?php echo (int)$book['id']; ?>">
+                            <button type="submit" class="btn add-to-cart-btn add-to-cart-lg">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                                Shto në shportë
+                            </button>
+                        </form>
 
                         <a
                             href="buy.php?id=<?php echo (int)$book['id']; ?>"
