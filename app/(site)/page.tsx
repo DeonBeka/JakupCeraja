@@ -55,7 +55,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="hero-visual">
-            <img src="/images/hero/hero-1.jpg" alt="Libra të hapur në raft" width={1200} height={960} />
+            <img src="/images/library/hero-library.jpg" alt="Bibliotekë e vjetër me rafte librash" width={1200} height={900} fetchPriority="high" />
             <div className="hero-badge">
               <Truck />
               <div>
@@ -90,7 +90,7 @@ export default async function HomePage() {
       <section className="section section-alt">
         <div className="container split">
           <div className="split-img">
-            <img src="/images/backgrounds/about-books.jpg" alt="Raft me libra" width={1000} height={850} loading="lazy" />
+            <img src="/images/library/shelves-warm.jpg" alt="Rafte me libra" width={1200} height={900} loading="lazy" />
           </div>
           <div>
             <span className="tag">Rreth nesh</span>

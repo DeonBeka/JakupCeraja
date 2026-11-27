@@ -21,7 +21,7 @@ export default async function AboutPage() {
       <section className="section section-alt">
         <div className="container split">
           <div className="split-img">
-            <img src="/images/backgrounds/about-books.jpg" alt="Raft me libra" loading="lazy" />
+            <img src="/images/library/shelves-classic.jpg" alt="Rafte me libra të vjetër" width={1200} height={900} loading="lazy" />
           </div>
           <div>
             <span className="tag">Kush jemi</span>
